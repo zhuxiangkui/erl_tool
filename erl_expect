@@ -28,8 +28,9 @@ main(Args) ->
                                                      file:format_error(R), "\n"], []),
                           halt(1)
                   end;
-              [File] -> File;
-              _ ->
+              [File| _ ] -> File;
+              _OtherWise ->
+                  io:format("~p~n", [_OtherWise]),
                   usage(),
                   halt(1)
           end,
@@ -50,7 +51,10 @@ main(Args) ->
     case file:read_file(ScriptName) of
         {ok, ScriptString} ->
             try
-                Bindings = erl_eval:new_bindings(),
+                Bindings = erl_eval:add_binding(
+                             'Args',
+                             tl(RestArgs),
+                             erl_eval:new_bindings()),
                 case rpc:call(TargetNode,
                               erl_eval,
                               exprs,
@@ -86,6 +90,9 @@ process_args(["-sname", TargetName | Rest], Acc, _) ->
     ThisNode = append_node_suffix(TargetName, "_maint_"),
     {ok, _} = net_kernel:start([ThisNode, shortnames]),
     process_args(Rest, Acc, nodename(TargetName));
+process_args(["-echo" | Rest], Acc, TargetNode) ->
+    erlang:put(echo,true),
+    process_args(Rest, Acc, TargetNode);
 process_args([Arg | Rest], Acc, Opts) ->
     process_args(Rest, [Arg | Acc], Opts).
 
@@ -137,7 +144,12 @@ usage() ->
 parse(Str) ->
     {ok, Tokens, _} = erl_scan:string(Str),
     {ok, Exprs} = erl_parse:parse_exprs(Tokens),
-    expect_transform(Exprs).
+    case erlang:get(echo) of
+        true ->
+            expect_transform(Exprs);
+        _ ->
+            Exprs
+    end.
 
 expect_transform(Exprs) ->
     lists:flatmap(fun(X) -> expect_transform_expr(X) end,  Exprs).
@@ -147,9 +159,10 @@ expect_transform_expr(Expr) ->
     ExprStr = binary_to_list(
                 iolist_to_binary(
                   [ integer_to_list(Line), "> ", erl_pp:expr(Expr)])),
-    Var = binary_to_list(
-            iolist_to_binary(
-              [ "Out", integer_to_list(Line) ])),
+    Var = list_to_atom(
+            binary_to_list(
+              iolist_to_binary(
+                [ "Out", integer_to_list(Line) ]))),
     [{call,Line,
        {remote,Line,{atom,Line,io},{atom,Line,format}},
        [{string, Line, "~s~n"},
