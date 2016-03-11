@@ -51,20 +51,29 @@ main(Args) ->
     case file:read_file(ScriptName) of
         {ok, ScriptString} ->
             try
-                Bindings = erl_eval:add_binding(
-                             'Args',
-                             tl(RestArgs),
-                             erl_eval:new_bindings()),
-                case rpc:call(TargetNode,
-                              erl_eval,
-                              exprs,
-                              [parse(binary_to_list(ScriptString)), Bindings],
-                              60000) of
-                    {badrpc, Reason} ->
-                        io:format("RPC to ~p failed: ~p\n", [TargetNode, Reason]),
-                        halt(1);
-                    {value, _Value, _Bindings} ->
-                        ok % io:format("~p\n", [Value])
+                Bindings =
+                    lists:foldl(
+                      fun({Name, Value}, Binding) ->
+                              erl_eval:add_binding(Name, Value, Binding)
+                      end,
+                      erl_eval:new_bindings(),
+                      [{'Args', tl(RestArgs)}]),
+                Exprs = parse(binary_to_list(ScriptString)),
+                register(return_port, self()),
+                process_flag(trap_exit, true),
+                ThisNode = node(),
+                Pid = spawn_link(TargetNode,
+                                 erlang,
+                                 apply,
+                                 [fun() ->
+                                          ReturnValue = erl_eval:exprs(Exprs, Bindings),
+                                          {return_port, ThisNode} !  ReturnValue
+                                  end, []
+                                 ]),
+                io:format("start to wait ~p ~n~n",[Pid]),
+                receive
+                    Value ->
+                        io:format("DONE Value= ~p~n", [Value])
                 end
             catch
                 Class:Error ->
