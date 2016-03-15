@@ -10,7 +10,7 @@ main(Args) ->
     ok = start_epmd(),
     %% Extract the args
     {RestArgs, TargetNode} = process_args(Args, [], undefined),
-
+    erlang:put(echo,true),
     %% any commands that don't need a running node
     ScriptName
         = case RestArgs of
@@ -62,18 +62,22 @@ main(Args) ->
                 register(return_port, self()),
                 process_flag(trap_exit, true),
                 ThisNode = node(),
-                Pid = spawn_link(TargetNode,
-                                 erlang,
-                                 apply,
-                                 [fun() ->
-                                          ReturnValue = erl_eval:exprs(Exprs, Bindings),
-                                          {return_port, ThisNode} !  ReturnValue
-                                  end, []
-                                 ]),
-                io:format("start to wait ~p ~n~n",[Pid]),
+                _RemotePid =
+                    spawn_link(TargetNode,
+                               erlang,
+                               apply,
+                               [fun() ->
+                                        ReturnValue = erl_eval:exprs(Exprs, Bindings),
+                                        {return_port, ThisNode} !  ReturnValue
+                                end, []
+                               ]),
+                %% io:format("start to wait ~p ~n~n",[Pid]),
                 receive
-                    Value ->
-                        io:format("DONE Value= ~p~n", [Value])
+                    {'EXIT', _Pid, Exception} ->
+                        io:format("Exception = ~p~n", [Exception]),
+                        halt(1);
+                    {value, ok, _Values} ->
+                        ok %io:format("DONE Value= ~p~n", [Values])
                 end
             catch
                 Class:Error ->

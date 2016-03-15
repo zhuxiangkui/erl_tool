@@ -1,10 +1,10 @@
 [User, App, Org] =
 case Args of
     [_, _, _] -> Args;
-    [_, _] -> [Args | "easemob-demo"];
-    [_] -> [Args | "chatdemoui", "easemob-demo"]
+    [_, _] -> Args ++ [ "easemob-demo"];
+    [_] -> Args ++ [ "chatdemoui", "easemob-demo"]
 end,
-
+AppKey = [Org, "#", App],
 Worker = cuesport:get_worker(index),
 {ok, R} = eredis:q(Worker, [hgetall, iolist_to_binary(["unread:", AppKey, "_" , User, "@easemob.com/mobile"])]),
 io:format("~p~n",[R]),
