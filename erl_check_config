@@ -1,0 +1,60 @@
+#!/usr/bin/env escript
+%% -*- mode: erlang;erlang-indent-level: 4;indent-tabs-mode: nil -*-
+%% ex: ft=erlang ts=4 sw=4 et
+%% -------------------------------------------------------------------
+%%
+%% nodetool: Helper Script for interacting with live nodes
+%%
+%% -------------------------------------------------------------------
+main([ConfigFile]) ->
+    [Config] = check_syntax(ConfigFile),
+    check_ticktick(Config),
+    check_msync(Config),
+    check_message_store(Config),
+    chech_lager(Config).
+
+
+check_syntax(ConfigFile) ->
+    case file:consult(ConfigFile) of
+        {ok, Value} ->
+            Value;
+        {error, {Line, _, Reason}} ->
+            io:format("~s:~p: ~s~n", [ConfigFile, Line, Reason]),
+            halt(1)
+    end.
+
+check_ticktick(Config) ->
+    AppConfig = proplists:get_value(ticktick, Config,[]),
+    case proplists:get_value(machine_id, AppConfig, 0) of
+        0 -> warn("machine id is zero", []);
+        _ -> ok
+    end,
+    ok.
+check_msync(Config) ->
+    AppConfig = proplists:get_value(msync, Config,[]),
+    check_msync_overload(proplists:get_value(overload, AppConfig, 0)),
+    check_msync_overload_factor(proplists:get_value(overload, AppConfig, 0)).
+
+check_message_store(_Config) ->
+    ok.
+chech_lager(_Config) ->
+    ok.
+
+
+check_msync_overload(X)
+  when X > 1 andalso X < 1000 ->
+    ok;
+check_msync_overload(X) ->
+    err("msync.overload = ~p is not reasonable", [X]).
+
+check_msync_overload_factor(X)
+  when X > 1500 andalso X < 4000 ->
+    ok;
+check_msync_overload_factor(X) ->
+    err("msync.overload_factor = ~p is not reasonable", [X]).
+
+
+warn(Fmt, Args) ->
+    io:format("WARN: ~s~n", [iolist_to_binary(io_lib:format(Fmt, Args))]).
+err(Fmt, Args) ->
+    io:format("ERROR: ~s~n", [iolist_to_binary(io_lib:format(Fmt, Args))]).
