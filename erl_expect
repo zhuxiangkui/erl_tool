@@ -9,8 +9,8 @@
 main(Args) ->
     ok = start_epmd(),
     %% Extract the args
+    erlang:put(echo,false),
     {RestArgs, TargetNode} = process_args(Args, [], undefined),
-    erlang:put(echo,true),
     %% any commands that don't need a running node
     ScriptName
         = case RestArgs of
@@ -105,6 +105,9 @@ process_args(["-sname", TargetName | Rest], Acc, _) ->
     process_args(Rest, Acc, nodename(TargetName));
 process_args(["-echo" | Rest], Acc, TargetNode) ->
     erlang:put(echo,true),
+    process_args(Rest, Acc, TargetNode);
+process_args(["-noecho" | Rest], Acc, TargetNode) ->
+    erlang:put(echo,false),
     process_args(Rest, Acc, TargetNode);
 process_args([Arg | Rest], Acc, Opts) ->
     process_args(Rest, [Arg | Acc], Opts).
