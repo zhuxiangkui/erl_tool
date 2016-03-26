@@ -1,9 +1,13 @@
-
-Num = 3,
+Num = case Args of
+	[StrN] ->
+	    list_to_integer(StrN);
+	_ ->
+	    10
+    end,
 
 ShowProcess =
 fun({Pid, Memory}) ->
-	{Pid, Memory, process_info(Pid, [registered_name, initial_call, message_queue_len, current_stacktrace])}
+	io:format("~p~n",[{Pid, Memory, process_info(Pid, [registered_name, initial_call, message_queue_len, current_stacktrace])}])
 end,
 erlang:memory(),
 TopMemProcesses =
@@ -20,5 +24,6 @@ lists:sublist(
 	      end
       end, processes())) , Num),
 
-lists:map(ShowProcess, TopMemProcesses).
+lists:map(ShowProcess, TopMemProcesses),
+ok.
 

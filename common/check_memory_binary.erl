@@ -1,3 +1,10 @@
+N = case Args of
+	[StrN] ->
+	    list_to_integer(StrN);
+	_ ->
+	    10
+    end,
+
 BinaryMemory = fun(Bins)  ->
 		       lists:foldl(fun({_,Mem,_}, Tot) ->
 					   Mem+Tot end, 0, Bins)
@@ -31,14 +38,12 @@ MostBinarySize = fun(N) ->
 			       
 			      ),
 			 Sum = lists:foldl(fun({_,V,_}, S) -> S + V end, 0, List2),
-			 io:format("total binary = ~p~n", [Sum]),
-			 lists:sublist(List2,N)
+			 io:format("total binary = ~p Mb; top~n", [Sum/1024/1024]),
+			 lists:foreach(
+			   fun({Pid,Size,Info}) ->
+				   io:format("Pid = ~p, Size = ~p Mb, Info = ~p~n", [Pid, Size/1024/1024, Info])
+			   end,lists:sublist(List2,N))
 		 end,
 
-MostBinarySize(5),
-erlang:memory(),
-erlang:system_info(process_count),
-erlang:system_info(process_limit),
-erlang:system_info(port_count),
-erlang:system_info(port_limit).
-
+MostBinarySize(N),
+ok.
