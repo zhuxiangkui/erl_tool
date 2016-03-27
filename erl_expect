@@ -98,10 +98,12 @@ process_args(["-setcookie", Cookie | Rest], Acc, TargetNode) ->
 process_args(["-name", TargetName | Rest], Acc, _) ->
     ThisNode = append_node_suffix(TargetName, "_maint_"),
     {ok, _} = net_kernel:start([ThisNode, longnames]),
+    set_default_cookie(),
     process_args(Rest, Acc, nodename(TargetName));
 process_args(["-sname", TargetName | Rest], Acc, _) ->
     ThisNode = append_node_suffix(TargetName, "_maint_"),
     {ok, _} = net_kernel:start([ThisNode, shortnames]),
+    set_default_cookie(),
     process_args(Rest, Acc, nodename(TargetName));
 process_args(["-echo" | Rest], Acc, TargetNode) ->
     erlang:put(echo,true),
@@ -190,3 +192,12 @@ expect_transform_expr(Expr) ->
        [{string, Line, "~p~n"},
         {cons,Line,{var, 1, Var},{nil,Line}}]}
     ].
+
+
+set_default_cookie() ->
+    case os:getenv("ERLANG_COOKIE") of
+        Cookie when is_list(Cookie) ->
+            erlang:set_cookie(node(), list_to_atom(Cookie));
+        _ ->
+            ok
+    end.
