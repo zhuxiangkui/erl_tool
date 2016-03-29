@@ -61,21 +61,20 @@ main(Args) ->
                 Exprs = parse(binary_to_list(ScriptString)),
                 register(return_port, self()),
                 process_flag(trap_exit, true),
-                ThisNode = node(),
                 _RemotePid =
                     spawn_link(TargetNode,
-                               erlang,
-                               apply,
-                               [fun() ->
-                                        ReturnValue = erl_eval:exprs(Exprs, Bindings),
-                                        {return_port, ThisNode} !  ReturnValue
-                                end, []
+                               erl_eval,
+                               exprs,
+                               [
+                                Exprs, Bindings
                                ]),
                 %% io:format("start to wait ~p ~n~n",[Pid]),
                 receive
                     {'EXIT', _Pid, Exception} ->
-                        io:format("Exception = ~p~n", [Exception]),
+                        io:format("Exception = ~p ~p~n", [Exception, Exprs]),
                         halt(1);
+                    ok ->
+                        ok;
                     {value, ok, _Values} ->
                         ok %io:format("DONE Value= ~p~n", [Values])
                 end
@@ -159,7 +158,11 @@ append_node_suffix(Name, Suffix) ->
 %%
 usage() ->
     io:format("usage: todo ~n",[]).
+
 parse(Str) ->
+    prelude() ++ parse_rel (Str) ++ post_action().
+
+parse_rel(Str) ->
     {ok, Tokens, _} = erl_scan:string(Str),
     {ok, Exprs} = erl_parse:parse_exprs(Tokens),
     case erlang:get(echo) of
@@ -181,13 +184,13 @@ expect_transform_expr(Expr) ->
             binary_to_list(
               iolist_to_binary(
                 [ "Out", integer_to_list(Line) ]))),
-    [{call,Line,
+    [{call,Line,                                % io:format("~s~n",[<EXPR_STR>])
        {remote,Line,{atom,Line,io},{atom,Line,format}},
        [{string, Line, "~s~n"},
         {cons,Line,{string,Line,ExprStr},{nil,Line}}]},
-     {match, Line, {var, 1, Var},
+     {match, Line, {var, 1, Var},               % Out<LINE> = <Result>
       Expr},
-     {call,Line,
+     {call,Line,                                % io:format("~p~n", [Out<LINE>])
        {remote,Line,{atom,Line,io},{atom,Line,format}},
        [{string, Line, "~p~n"},
         {cons,Line,{var, 1, Var},{nil,Line}}]}
@@ -201,3 +204,16 @@ set_default_cookie() ->
         _ ->
             ok
     end.
+
+
+prelude() ->
+    [].
+
+post_action() ->
+    Line = 0,
+    [{call,Line,                                % io:format("~s~n",[<EXPR_STR>])
+      {remote,Line,{atom,Line,erlang},{atom,Line,send}},
+      [{tuple, Line, [{atom,Line,return_port},
+                      {atom,Line,node()}]},
+       {atom, Line, ok}]}].
+    

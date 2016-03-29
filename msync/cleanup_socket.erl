@@ -11,8 +11,7 @@ F = fun(Socket)
        (_) ->
             false
     end,
-
-lists:foreach(fun gen_tcp:close/1,
-              lists:filtermap(F, element(2, process_info(whereis(msync_c2s), links)))).
+lists:foreach(fun gen_tcp:close/1, lists:filtermap(F, element(2, process_info(whereis(msync_c2s), links)))),
+ok.
 
 
