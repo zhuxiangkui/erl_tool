@@ -165,16 +165,17 @@ parse(Str) ->
 parse_rel(Str) ->
     {ok, Tokens, _} = erl_scan:string(Str),
     {ok, Exprs} = erl_parse:parse_exprs(Tokens),
-    case erlang:get(echo) of
-        true ->
-            expect_transform(Exprs);
-        _ ->
-            Exprs
-    end.
+    expect_transform(Exprs).
 
 expect_transform(Exprs) ->
     lists:flatmap(fun(X) -> expect_transform_expr(X) end,  Exprs).
 
+expect_transform_expr({call,_LINE1,{atom,_LINE2,echo},[{atom,_LINE3,on}]}) ->
+    erlang:put(echo, true),
+    [];
+expect_transform_expr({call,_LINE1,{atom,_LINE2,echo},[{atom,_LINE3,off}]}) ->
+    erlang:put(echo, false),
+    [];
 expect_transform_expr(Expr) ->
     Line = element(2, Expr),
     ExprStr = binary_to_list(
@@ -184,17 +185,24 @@ expect_transform_expr(Expr) ->
             binary_to_list(
               iolist_to_binary(
                 [ "Out", integer_to_list(Line) ]))),
-    [{call,Line,                                % io:format("~s~n",[<EXPR_STR>])
-       {remote,Line,{atom,Line,io},{atom,Line,format}},
-       [{string, Line, "~s~n"},
-        {cons,Line,{string,Line,ExprStr},{nil,Line}}]},
-     {match, Line, {var, 1, Var},               % Out<LINE> = <Result>
-      Expr},
-     {call,Line,                                % io:format("~p~n", [Out<LINE>])
-       {remote,Line,{atom,Line,io},{atom,Line,format}},
-       [{string, Line, "~p~n"},
-        {cons,Line,{var, 1, Var},{nil,Line}}]}
-    ].
+    %% for debugging: io:format("~p: ~s -> ~p~n",[Line, ExprStr, Expr]),
+    case erlang:get(echo) of
+        true ->
+            [{call,Line,                                % io:format("~s~n",[<EXPR_STR>])
+              {remote,Line,{atom,Line,io},{atom,Line,format}},
+              [{string, Line, "~s~n"},
+               {cons,Line,{string,Line,ExprStr},{nil,Line}}]},
+             {match, Line, {var, 1, Var},               % Out<LINE> = <Result>
+              Expr},
+             {call,Line,                                % io:format("~p~n", [Out<LINE>])
+              {remote,Line,{atom,Line,io},{atom,Line,format}},
+              [{string, Line, "~p~n"},
+               {cons,Line,{var, 1, Var},{nil,Line}}]}
+            ];
+        _ ->
+            [Expr]
+    end.
+
 
 
 set_default_cookie() ->
