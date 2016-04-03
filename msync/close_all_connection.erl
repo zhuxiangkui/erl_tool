@@ -1,6 +1,6 @@
 [Interval0] = Args,
 Interval = list_to_integer(Interval0),
-supervisor:restart_child(msync_sup, msync_server),
+supervisor:terminate_child(msync_sup, msync_server),
 lists:foreach(
   fun(Socket) when is_port(Socket) ->
 	  JID = msync_c2s_lib:get_socket_prop(Socket,pb_jid),
