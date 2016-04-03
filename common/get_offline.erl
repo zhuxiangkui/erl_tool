@@ -1,15 +1,19 @@
-[User, App, Org] =
-case Args of
-    [_, _, _] -> Args;
-    [_, _] -> Args ++ [ "easemob-demo"];
-    [_] -> Args ++ [ "chatdemoui", "easemob-demo"]
-end,
-AppKey = [Org, "#", App],
+[JID,Resource] = case Args of
+                     [ID] ->
+                         [list_to_binary(ID), <<"mobile">>];
+                     [ID, R] ->
+                         [list_to_binary(ID), list_to_binary(R)]
+                 end,
+
 Worker = cuesport:get_worker(index),
-{ok, R} = eredis:q(Worker, [hgetall, iolist_to_binary(["unread:", AppKey, "_" , User, "@easemob.com/mobile"])]),
-io:format("~p~n",[R]),
+{ok, Result} = eredis:q(Worker, [hgetall, iolist_to_binary(["unread:", JID , "@easemob.com/", Resource])]),
+io:format("~p~n",[Result]),
 lists:foreach(fun(M) ->
-                      {ok, List} = eredis:q(Worker, [lrange, iolist_to_binary(["index:unread:", AppKey, "_", User, "@easemob.com/mobile:", M]), 0,-1]),
+                      {ok, List} =
+                          eredis:q(Worker,
+                                   [lrange,
+                                    iolist_to_binary(["index:unread:", JID, "@easemob.com/",Resource, ":", M]),
+                                    0,-1]),
                       io:format("queue ~p ~n", [M]),
                       lists:foreach(
                         fun(MID) ->
@@ -17,4 +21,4 @@ lists:foreach(fun(M) ->
                                 Meta = msync_msg:decode_meta(message_store:read(MID)),
                                 io:format("       BODY is ~p~n", [Meta ])
                         end, List)
-              end, R).
+              end, Result).
