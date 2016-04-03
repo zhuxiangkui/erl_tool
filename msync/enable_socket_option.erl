@@ -35,8 +35,6 @@ lists:foreach(
    {nodelay, true}, 
    {buffer, 1460},
    {recbuf, 4096},
-   {send_timeout, 15000}]).
-
-
-
+   {send_timeout, 15000}]),
+supervisor:restart_child(msync_sup, msync_server).
 
