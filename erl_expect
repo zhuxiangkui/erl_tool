@@ -71,7 +71,7 @@ main(Args) ->
                 %% io:format("start to wait ~p ~n~n",[Pid]),
                 receive
                     {'EXIT', _Pid, Exception} ->
-                        io:format("Exception = ~p ~p~n", [Exception, Exprs]),
+                        io:format("Exception = ~p~n", [Exception]),
                         halt(1);
                     ok ->
                         ok;
