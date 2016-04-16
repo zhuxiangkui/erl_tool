@@ -1,0 +1,17 @@
+#!/bin/bash
+
+
+THIS_DIR=$(dirname $0)
+COOKIE=$(cat /data/apps/opt/ejabberd/var/lib/ejabberd/.erlang.cookie)
+JID=`echo -e $(echo $QUERY_STRING  | sed 's/^NAME=//g;s/%\(..\)/\\\\x\1/g')`
+echo 'Content-Type: text/plain'
+echo ""
+
+if [ -z "$JID" ]; then
+    echo "no jid"
+else
+    $THIS_DIR/../erl_expect -sname ejabberd@ebs-ali-beijing-5-pri $THIS_DIR/../ejabberd/message_history.erl -setcookie "$COOKIE" "$JID"
+fi
+
+
+

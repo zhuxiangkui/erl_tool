@@ -1,0 +1,12 @@
+#!/bin/bash
+
+
+THIS_DIR=$(dirname $0)
+COOKIE=$(cat /data/apps/opt/ejabberd/var/lib/ejabberd/.erlang.cookie)
+MID=`echo -e $(echo $QUERY_STRING  | sed 's/^MID=//g;s/%\(..\)/\\\\x\1/g')`
+echo 'Content-Type: text/plain'
+echo ""
+$THIS_DIR/../erl_expect -sname ejabberd@ebs-ali-beijing-5-pri $THIS_DIR/../common/read_message.erl -setcookie "$COOKIE" "$MID"
+
+
+
