@@ -1,0 +1,39 @@
+.muclog_container{
+    margin: 10px 0px;
+    position:relative;
+    background:#afffaf;
+}
+.muclog_params{
+    position:relative;
+    float:left;
+    width: 350px;
+    /*height: 300px;*/
+    padding: 10px 10px;
+    background:#00ffaf;
+}
+.muclog_params .muclog_input{
+    float:left;
+    width: 100%;
+    height: 40px;
+    margin: 0px 5px;
+    text-align: center;
+}
+.muclog_input input, .muclog_input select{
+    float:left;
+    display:block;
+    width: 240px;
+    height: 30px;
+}
+.muclog_input .muclog_label{
+    float:left;
+    width: 50px;
+    padding-right: 10px;
+}
+.muclog_output{
+    float:left;
+    position: relative;
+    width: 800px;
+}
+.muclog_output .muclog_info{
+    height: 50px;
+}

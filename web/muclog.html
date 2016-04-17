@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="utf-8" />
+        <script type="text/javascript" src="js/jquery-1.11.0.js" ></script>
+        <script type="text/javascript" src="js/bootstrap.min.js" ></script>
+        <link rel="stylesheet" href="css/bootstrap.min.css" />
+        <link rel="stylesheet" href="css/bootstrap-theme.min.css" />
+        <title>环信后台查询工具</title>
+    </head>
+
+    <body>
+        <div class="container">
+        	<h2>MUC日志查询</h2>
+            <div class="col-lg-12">
+                <div class="input-group col-lg-12">
+                	<div class="input-group-addon">ID</div>
+                    <input class="form-control" type="text" id="input_gid" />
+                </div>
+                <div class="input-group col-lg-12">
+                    <div class="input-group-addon">AppKey</div>
+                    <input class="form-control" type="text" id="input_appkey" />
+                </div>
+                <div class="input-group col-lg-12">
+                    <div class="input-group-addon">时间</div>
+                    <input class="form-control" type="date" id="input_time" />
+                </div>
+                <div class="input-group col-lg-12">
+                    <div class="input-group-addon">操作</div>
+                    <select class="form-control" id="select_muc_op">
+                         <!--
+                             以下是对群的操作
+                         -->
+                        <option data-op="group_create">创建</option>
+                        <option data-op="group_drop">删除</option>
+                        <option data-op="group_modify_owner">更改所有者</option>
+                        <option data-op="group_modify_maxuser">更改人数上限</option>
+                        <option data-op="group_modify_public">更改是否公开</option>
+                        <option data-op="group_modify_desc">更改描述</option>
+                        <option data-op="group_modify_approval">更改入群批准</option>
+                        <!--
+                            以下是对群成员的操作
+                        -->
+                        <option data-op="group_user_join">用户加入</option>
+                        <option data-op="group_user_exit">用户退出</option>
+                        <option data-op="group_add_to_blacklist">添加到黑名单</option>
+                        <option data-op="group_delete_from_blacklist">从黑名单移除</option>
+                        <option data-op="group_user_delete">删除成员</option>
+                        <option data-op="group_modify_current_user_number">成员数变化</option>
+                    </select>
+                </div>
+                <br />
+                <div class="col-lg-12">
+                    <input class="form-control" type="button" id="check_log" value="查询"></input>
+                </div>
+            </div>
+            <br />
+            <div class="col-lg-12">
+                <div class="row">
+                    <div class="row">
+						<table class="table">
+							<caption>查询结果</caption>
+							<thead id="check_results">
+							</thead>
+						</table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script type="text/javascript">
+    	var host = "http://d.easemob.com:3010";
+        var op = $("#select_muc_op option:selected").attr("data-op");
+        var gid = "";
+        var org = "";
+        var app = "";
+        var time = "";
+        $('#input_gid').on("change", function(e) {
+            gid = $(this).val();
+        });
+        $("#select_muc_op").on('change', function(e) {
+            op = $("#select_muc_op option:selected").attr("data-op");
+        });
+        $('#input_appkey').on("change", function(e) {
+            var appkey = $(this).val();
+            var orgapp = appkey.split("#");
+            org = orgapp[0];
+            app = orgapp[1];
+        });
+        $('#input_time').on("change", function(e) {
+            time = $(this).val().replace(/-/g, "");
+            time = time.replace(/\//g, "");
+            time = time.replace(/\./g, "");
+        });
+        $("#check_log").on("click", function(e) {
+            if (checkParams() == false) {
+                alert("参数错误！");
+                return;
+            }
+            $("#check_results").html(""); 
+            var params = {
+                    "data":{
+	                    "op": op,
+	                    "gid": gid,
+	                    "companyName": org,
+	                    "appName": app,
+	                    "queryDate": time
+                    }
+                }; 
+            console.log(JSON.stringify(params));
+            $("#check_results").html('<tr class="title">'+
+										'<th>时间</th>'+ 
+										'<th>用户</th>' +
+										'<th>当前人数</th>' +
+										'<th>最大人数</th>' +
+										'<th>入群批准</th>' +
+										'<th>是否公开</th>' +
+									'</tr>');
+            $.ajax({
+                method: "POST",
+                contentType: "application/json; charset=utf-8",
+                url: host+"/getSpecificGroupLog",
+                data: JSON.stringify(params), 
+                dataType: "json", 
+                success: function(data) {
+                	var results = data.data;
+                	if(results == undefined || results == ""){
+                		return false;
+                	}
+                	results.sort(function(a,b){
+                		return Number(b["ts"]) - Number(a["ts"]);
+                	});
+                    for(var d in results){
+                    	var r = results[d];
+                    	if(r["cu"] == "0" && r["mu"] == "0"){
+                    		r["cu"] = r["mu"] = "-";
+                    	}
+                    	var dt = new Date();
+                    	dt.setTime(parseInt(r["ts"]));
+                    	var dt_str = dt.toLocaleString();
+                    	var muclog = "<tr class='muclog-result'>";
+                    	muclog += "<th>"+ dt_str + "</th>";
+						muclog += "<th>"+ r["uid"] + "</th>";
+						muclog += "<th>"+ r["cu"] + "</th>";
+						muclog += "<th>"+ r["mu"] + "</th>";
+						muclog += "<th>"+ (r["approval"]=="0"?"不需要":"需要") + "</th>";
+						muclog += "<th>"+ (r["pub"]=="0"?"不公开":"公开") + "</th></tr>";
+                        $("#check_results .title").after(muclog);
+                    }
+                },
+                error: function(err, status) {
+                    $("#check_results").append("<label>"+err.responseText + "</label><br/>");
+                },
+                async: true
+            }); 
+        });
+
+        function checkParams() {
+            if (op == "" || gid == "" || app == "" || org == "" || time == "") {
+                return false;
+            }
+        }
+    </script>
+
+</html>

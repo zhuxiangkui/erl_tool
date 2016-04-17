@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8" >
+		<title>环信后台查询工具</title>
+		<script type="text/javascript" src="js/jquery-1.11.0.js" ></script>
+		<script type="text/javascript" src="js/bootstrap.min.js" ></script>
+		<script type="text/javascript" src="js/config.js" ></script>
+		<link rel="stylesheet" href="css/bootstrap.min.css" />
+		<link rel="stylesheet" href="css/bootstrap-theme.min.css" />
+	</head>
+	<body>
+		<div class="container">
+			<div class="col-md-2">
+				<h4 id="toolbox-desc">后台查询工具</h4>
+				<ul class="list-group" id="toolbox-menu">
+					<li class="last-item hidden"></li>
+				</ul>
+			</div>
+			<div class="col-md-10" id="tool-page">
+				<iframe src="muclog.html" width="100%" height="600px" frameborder="no"></iframe>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript">
+		for(var t in ToolboxConfig.tools){
+			var tool = ToolboxConfig.tools[t];
+			var $tool = $('<li class="list-group-item" page=""></li>');
+			$tool.attr("page", tool.page);
+			$tool.text(tool.desc);
+			if(tool.active){
+				$tool.addClass("active");
+			}
+			$("#toolbox-menu .last-item").before($tool);
+		}
+		$("#toolbox-menu .list-group-item").on("click", function(){
+			$("#toolbox-menu .active").removeClass("active");
+			var page = $(this).attr("page") || "empty.html";
+			page = page==""?"empty.html":page;
+			$(this).addClass("active");
+			$("#tool-page iframe").attr("src", page);
+		});
+	</script>
+</html>

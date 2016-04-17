@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="utf-8" />
+        <script type="text/javascript" src="js/jquery-1.11.0.js" ></script>
+        <script type="text/javascript" src="js/bootstrap.min.js" ></script>
+        <link rel="stylesheet" href="css/bootstrap.min.css" />
+        <link rel="stylesheet" href="css/bootstrap-theme.min.css" />
+        <title>环信后台查询工具</title>
+    </head>
+
+    <body>
+        <div class="container">
+        	<h2>消息记录查询</h2>
+            <div class="col-lg-12">
+                <div class="input-group col-lg-12" id="id-input">
+                	<div class="input-group-addon">
+	                	<select id="id-select">
+	                		<option method="/message_history?NAME=">UID</option>
+	                		<option method="/message?MID=">MsgID</option>
+	                	</select>
+                	</div>
+                    <input class="form-control" type="text" id="input_id" />
+                </div>
+                <div class="input-group col-lg-12" style="display: none;">
+                    <div class="input-group-addon">时间</div>
+                    <input class="form-control" type="date" id="input_time" />
+                </div>
+                <br />
+                <div class="col-lg-12">
+                    <input class="form-control" type="button" id="check_log" value="查询"></input>
+                </div>
+            </div>
+            <br />
+            <div class="col-lg-12">
+                <div class="row">
+                    <div class="row">
+							<caption>查询结果</caption>
+							<iframe src="" width="100%" height="400px" frameborder="no" id="check_results"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script type="text/javascript">
+    	var host = "http://182.92.239.119:8000/cgi-bin";
+        var method = $("#id-select option:selected").attr("method");
+        var id = "";
+        var id_type = $("#id-select").val();
+        var time = "";
+        $("#id-select").on('change', function(e) {
+        	method = $("#id-select option:selected").attr("method");
+        	id_type = $("#id-select").val();
+        	$("#input_id").val("");
+        	id = "";
+        });
+        $('#input_id').on("change", function(e) {
+            id = $(this).val();
+            if(id_type == "UID" && id.search(/#/g)<0){
+            	id = "";
+            	return;
+            }
+            id = id.replace(/#/g, "%23");
+        });
+        $('#input_time').on("change", function(e) {
+            time = $(this).val().replace(/-/g, "");
+            time = time.replace(/\//g, "");
+            time = time.replace(/\./g, "");
+        });
+        $("#check_log").on("click", function(e) {
+            if (checkParams() == false) {
+                alert("参数错误！");
+                return;
+            }
+			$("#check_results").attr("src", host + method + id);
+        });
+
+        function checkParams() {
+            if (id == "") {
+                return false;
+            }
+        }
+    </script>
+
+</html>
