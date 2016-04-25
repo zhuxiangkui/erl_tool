@@ -12,10 +12,12 @@ lists:foreach(
 				    Time = Time0 / 1000,
 				    {max(Max, Time), min(Min, Time), (Avg * Count + Time)/(Count + 1), Count + 1};
 				{Time, Value} ->
+				    io:format("error ~p timeout~n",[Node]),
 				    {50000, Min, 50000, Count + 1}
 			    end
 			catch
 			    Class:Type ->
+				io:format("error ~p timeout~n",[Node]),
 				{50000, Min, 50000, Count + 1}
 			end;
 		   (_, Acc) ->
