@@ -10,7 +10,6 @@ case Args of
 end,
 try ets:lookup(store_nodes, Type)of
     [{_,_,NodeResults}]->
-        io:format("nodes: ",[]),
         lists:foreach(
           fun(Node) ->
                   io:format("~w ",[Node])
