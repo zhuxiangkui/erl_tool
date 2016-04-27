@@ -15,7 +15,12 @@ IsNodeAlive =
 fun(Node) ->
         try net_adm:ping(Node) of
             pong ->
-                true;
+                try rpc:call(Node, erlang, node, []) of
+                    Node -> true;
+                    _ -> false
+                catch
+                    _:_ -> false
+                end;
             _ ->
                 false
         catch
@@ -32,9 +37,25 @@ case DeadNodes of
 end,
 
 X0 = ejabberd_store:set_store_nodes(Type, AliveNodes),
-io:format("ejabberd_store:set_store_nodes => ~w~n", [X0]),
+case AliveNodes of
+    [] ->
+        io:format("enable blackhole mode => ~w~n", [X0]);
+    _ ->
+        io:format("restore blackhole mode => ~w~n", [X0])
+end,
 
-NodeResults = ets:lookup(store_nodes, Type),
-io:format("nodes: ~w~n",[NodeResults]),
+try ets:lookup(store_nodes, Type)of
+    [{_,_,NodeResults}]->
+        lists:foreach(
+          fun(Node) ->
+                  io:format("~w ",[Node])
+          end, NodeResults),
+        io:format("~n",[]);
+    [] ->
+        io:format("black mode is enabled.~n",[])
+catch
+    E:V ->
+        io:format("error ~w:~w~n",[E,V])
+end,
 
 ok.

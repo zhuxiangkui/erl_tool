@@ -16,7 +16,7 @@ try ets:lookup(store_nodes, Type)of
           end, NodeResults),
         io:format("~n",[]);
     [] ->
-        io:format("nodes: ~n",[])
+        io:format("error no nodes~n",[])
 catch
     E:V ->
         io:format("error ~w:~w~n",[E,V])
