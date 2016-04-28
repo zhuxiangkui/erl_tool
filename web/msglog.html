@@ -5,6 +5,7 @@
         <meta charset="utf-8" />
         <script type="text/javascript" src="js/jquery-1.11.0.js" ></script>
         <script type="text/javascript" src="js/bootstrap.min.js" ></script>
+        <script type="text/javascript" src="js/config.js" ></script>
         <link rel="stylesheet" href="css/bootstrap.min.css" />
         <link rel="stylesheet" href="css/bootstrap-theme.min.css" />
         <title>环信后台查询工具</title>
@@ -44,7 +45,7 @@
         </div>
     </body>
     <script type="text/javascript">
-    	var host = "http://182.92.239.119:8000/cgi-bin";
+    	var host = ToolboxConfig.tools.msglog.host;
         var method = $("#id-select option:selected").attr("method");
         var id = "";
         var id_type = $("#id-select").val();
@@ -57,11 +58,14 @@
         });
         $('#input_id').on("change", function(e) {
             id = $(this).val();
-            if(id_type == "UID" && id.search(/#/g)<0){
-            	id = "";
-            	return;
+            if(id_type == "UID"){
+            	if(id.search(/#/g)<0){
+            		id = "";
+            	}else{
+            		id = id.replace(/#/g, "%23");
+            	};
             }
-            id = id.replace(/#/g, "%23");
+            return id;
         });
         $('#input_time').on("change", function(e) {
             time = $(this).val().replace(/-/g, "");
@@ -73,7 +77,9 @@
                 alert("参数错误！");
                 return;
             }
-			$("#check_results").attr("src", host + method + id);
+            var url = host + method + id;
+            console.log(url);
+			$("#check_results").attr("src", url);
         });
 
         function checkParams() {
