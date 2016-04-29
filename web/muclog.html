@@ -5,6 +5,7 @@
         <meta charset="utf-8" />
         <script type="text/javascript" src="js/jquery-1.11.0.js" ></script>
         <script type="text/javascript" src="js/bootstrap.min.js" ></script>
+        <script type="text/javascript" src="js/config.js" ></script>
         <link rel="stylesheet" href="css/bootstrap.min.css" />
         <link rel="stylesheet" href="css/bootstrap-theme.min.css" />
         <title>环信后台查询工具</title>
@@ -70,7 +71,7 @@
         </div>
     </body>
     <script type="text/javascript">
-    	var host = "http://d.easemob.com:3010";
+    	var host = ToolboxConfig.tools.muclog.host;
         var op = $("#select_muc_op option:selected").attr("data-op");
         var gid = "";
         var org = "";
@@ -138,7 +139,12 @@
                     	}
                     	var dt = new Date();
                     	dt.setTime(parseInt(r["ts"]));
-                    	var dt_str = dt.toLocaleString();
+                    	var dt_str = dt.getFullYear() + "/" + 
+                    				(dt.getMonth() + 1) + "/" + 
+                    				dt.getDate() + " " + 
+                    				dt.getHours() + ":" + 
+                    				dt.getMinutes() + ":" + 
+                    				dt.getSeconds();
                     	var muclog = "<tr class='muclog-result'>";
                     	muclog += "<th>"+ dt_str + "</th>";
 						muclog += "<th>"+ r["uid"] + "</th>";

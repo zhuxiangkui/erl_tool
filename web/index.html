@@ -25,7 +25,7 @@
 	<script type="text/javascript">
 		for(var t in ToolboxConfig.tools){
 			var tool = ToolboxConfig.tools[t];
-			var $tool = $('<li class="list-group-item" page=""></li>');
+			var $tool = $('<a class="list-group-item" href="javascript:void(0);" page=""></a>');
 			$tool.attr("page", tool.page);
 			$tool.text(tool.desc);
 			if(tool.active){
