@@ -1,6 +1,11 @@
+echo(off),
+{A, B, C} = os:timestamp(),
+random:seed(A, B, C),
+
 application:get_env(message_store, redis),
-Key = iolist_to_binary(io_lib:format("~p", [random:uniform()])),
+
 {ok, Tables} = application:get_env(message_store, redis),
+
 PingRedis =
 fun(Table) ->
         lists:foreach(
@@ -8,17 +13,20 @@ fun(Table) ->
                 when is_pid(Pid) ->
                   try
                       timer:sleep(10),
+		      Key = iolist_to_binary(io_lib:format("~p", [random:uniform()])),
                       {state, Host, Port,_,_,_,_,_,_,_} = sys:get_state(Pid),
+		      put(host, Host),
+		      put(port, Port),
                       case timer:tc(eredis,q,[Pid, [get, Key]]) of
                           {Time, {ok, _}} ->
-                              io:format("info: Table = ~p, Host=~p, Port = ~p, Resp = ~p ms, N=~p, Pid=~p ok~n",[Table, Host, Port, Time/1000, N,Pid]),
+                              io:format("~w ~w ~s:~w ~w ~w ~w~n",[node(), Table, Host, Port, Time/1000, N,Pid]),
                               ok;
                           {Time, Value} ->
-                              io:format("error: unexpected value, Table = ~p, Host=~p, Port = ~p, Resp = ~p ms, N=~p, Pid=~p, Value=~p~n",[Table, Host, Port, Time/1000, N,Pid, Value])
+                              io:format("~w ~w ~s:~w ~w ~w ~w~n",[node(), Table, Host, Port, 50000, N,Pid])
                       end
                   catch
                       Class:Type ->
-                          io:format("error: ~p:~p unexpected value, Table = ~p, N=~p, Pid=~p~n",[Class, Type, Table, N,Pid])
+                              io:format("~w ~w ~s:~w ~w ~w ~w~n",[node(), Table, get(host), get(port), 60000, N,Pid])
                   end;
              (_) ->
                   false
