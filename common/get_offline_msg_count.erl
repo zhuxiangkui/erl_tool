@@ -4,6 +4,7 @@
                      [ID, R] ->
                          [list_to_binary(ID), list_to_binary(R)]
                  end,
+mod_message_index_cache:read_offline_message([], JID, <<"easemob.com">>, <<"">>),
 
 Worker = cuesport:get_worker(index),
 {ok, Result} = eredis:q(Worker, [hgetall, iolist_to_binary(["unread:", JID , "@easemob.com/", Resource])]),
