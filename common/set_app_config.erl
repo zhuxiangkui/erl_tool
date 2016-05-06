@@ -20,6 +20,7 @@ fun
 (antispam_send, V) when is_boolean(V) -> true; %%  消息内容是否发送给反垃圾系统
 (antispam_receive, V) when is_boolean(V) -> true; %% 消息内容是否使用反垃圾功能
 (muc_presence, V) when is_boolean(V) -> true; %% 是否使用presence
+(muc_presence_async, V) when is_boolean(V) -> true; %% 是否使用presence_async
 (Key, Value) ->
     io:format("error: invalid config name or value  ~s=~s~n",[Key, Value]),
     exit(normal)
