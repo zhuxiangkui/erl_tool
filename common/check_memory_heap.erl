@@ -7,7 +7,7 @@ Num = case Args of
 
 ShowProcess =
 fun({Pid, Memory}) ->
-	io:format("~p: process memory ~w~n",[os:system_time(milli_seconds), {Pid, Memory, process_info(Pid, [registered_name, initial_call, message_queue_len, current_stacktrace])}])
+	io:format("[{~p, ~p},~n",[os:system_time(milli_seconds), {Pid, Memory, process_info(Pid, [registered_name, initial_call, message_queue_len, current_stacktrace])}])
 end,
 erlang:memory(),
 TopMemProcesses =
@@ -26,6 +26,6 @@ lists:sublist(
 
 lists:map(ShowProcess, TopMemProcesses),
 
-io:format("~p: system allocator ~w~n",[os:system_time(milli_seconds),  erlang:system_info(allocator)]),
+io:format("{~p, ~p}]~n",[os:system_time(milli_seconds),  erlang:system_info(allocator)]),
 ok.
 
