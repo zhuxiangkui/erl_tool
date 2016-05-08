@@ -1,0 +1,75 @@
+#!/usr/bin/env escript
+%% -*- erlang -*-
+%%! -smp enable -sname cover
+
+-module(cover).
+-export([main/1, destruct/1]).
+
+main( [] ) ->
+	io:format("No arguments.~n",[]);
+
+main( Args ) ->
+ 	io:format("Got Args: ~p~n",[Args]),
+
+    Filename = [Args],
+    {ok, Terms}=file:consult(Filename),
+    {ok, F} = file:open(Filename++".out", write),
+    file:write(F, destruct(Terms)),
+    file:close(F).
+    %% io:format("~p~n", [Terms]).
+
+destruct(Terms) ->
+    BuildNames =
+        fun(Names) ->
+                string:join(lists:map(fun erlang:atom_to_list/1, lists:reverse(Names)), "_")
+        end,
+
+    Record2Plist1 =
+        fun Record2PlistFun(Atom, _Names, Acc)
+              when is_atom(Atom) ->
+                Acc;
+            Record2PlistFun(Number, Names, Acc)
+              when is_integer(Number) ; is_float(Number) ->
+                [{ BuildNames(Names), Number} | Acc];
+            Record2PlistFun(Record, _Names, Acc)
+              when is_tuple(Record) , element(1,Record) == versions ->
+                Acc;
+            Record2PlistFun(Record, _Names, Acc)
+              when is_tuple(Record) , element(1,Record) == name ->
+                Acc;
+            Record2PlistFun(Record, Names, Acc)
+              when is_tuple(Record) , is_atom(element(1,Record)) ->
+                Name = element(1,Record) ,
+                lists:foldl(
+                  fun(I, AccInner) ->
+                          NewNames = [list_to_atom(integer_to_list(I)), Name | Names],
+                          NewElement = erlang:element(I + 1, Record),
+                          Record2PlistFun(NewElement, NewNames, AccInner)
+                  end, Acc, lists:seq(1, erlang:size(Record) - 1));
+            Record2PlistFun(List, Names, Acc)
+              when is_list(List) ->
+                lists:foldl(
+                  fun(Elt, AccInner) ->
+                          Record2PlistFun(Elt, Names, AccInner)
+                  end, Acc, List)
+        end,
+    Results =
+        lists:flatmap(fun
+                          ([{TS, _}]) when is_integer(TS)->
+                              [];
+                          ([{erts_mmap, Info} | Detail]) ->
+                              [Record2Plist1(Info, [erts_mmap, mseg_alloc], [])
+                               | lists:flatmap(fun({instance, N, InfoI}) ->
+                                                   Record2Plist1(InfoI, [list_to_atom("i" ++ integer_to_list(N)), mseg_alloc], [])
+                                           end, Detail)];
+                          ([{instance, _, _} | _] = InstanceInfo) ->
+                              lists:flatmap(fun({instance, N, Info}) ->
+                                                Record2Plist1(Info, [list_to_atom("i" ++ integer_to_list(N)), eheap_alloc], [])
+                                        end, InstanceInfo)
+                      end, Terms),
+
+    lists:map(fun([{Name, Value}]) ->
+                      io_lib:format("~s ~p~n", [Name, Value]);
+                 ({Name, Value}) ->
+                      io_lib:format("~s ~p~n", [Name, Value])
+              end, Results).
