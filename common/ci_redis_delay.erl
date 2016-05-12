@@ -30,10 +30,10 @@ end,
 RedisDelay = 
 fun(Table) ->
 	{Max, Min, Avg, Count} = GetRedisDelay(Table),
-	io:format("redis_~p_delay_max:~p~n",[Table, Max]),
-	io:format("redis_~p_delay_min:~p~n",[Table, Min]),
-	io:format("redis_~p_delay_avg:~p~n",[Table, Avg]),
-	io:format("redis_~p_delay_count:~p~n",[Table, Count])
+	io:format("redis_~s_delay_max:~p~n",[Table, Max]),
+	io:format("redis_~s_delay_min:~p~n",[Table, Min]),
+	io:format("redis_~s_delay_avg:~p~n",[Table, Avg]),
+	io:format("redis_~s_delay_count:~p~n",[Table, Count])
 end,
 
 
@@ -44,7 +44,6 @@ end,
 
 TableExists =
 fun(EtsTableName) ->
-	io:format("~p~n", [EtsTableName]),
 	case ets:info(EtsTableName) of
 	    undefined ->
 		false;
