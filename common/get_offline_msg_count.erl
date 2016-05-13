@@ -46,7 +46,7 @@ TotalList2 = TotalListFun(),
 Intersection = TotalList1 -- ( TotalList1 -- TotalList2 ),
 case length(Intersection) of
     0 ->
-        ok;
+        io:format("~s has ~p offline message(s)~n",[JID, length(Intersection)]);
     _ ->
         Session = ejabberd_sm:get_session(JID, <<"easemob.com">>, Resource),
         case Session of
