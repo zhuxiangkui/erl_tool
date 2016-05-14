@@ -28,7 +28,7 @@ TotalListFun =
                 Query = [lrange, iolist_to_binary(["index:unread:", JID, "@easemob.com/",Resource, ":", Queue]), 0,-1],
                 case eredis:q(Worker,Query) of
                     {ok, List} ->
-                        lists:append([List | AccInner]);
+                        lists:append(List, AccInner);
                     W -> AccInner
                 end;
             (W,AccInner) ->
