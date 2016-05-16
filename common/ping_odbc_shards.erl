@@ -42,8 +42,8 @@ LargeDelays = lists:filter(
 timer:sleep(2000),
 DelayInfos2 = lists:flatmap(GetDelayInfo, lists:seq(0,31)),
 lists:foreach(
-  fun({N, N2, Delay, Pid, {_, State}}) when Delay > 1000 ->
-          io:format("stubben slow odbc conn ~s ~p ~p ~p ~s ~p~n", [node(), N , N2, Delay, lists:nth(1,element(4,State)), lists:nth(2,element(4,State)) ]),
+  fun({N, N2, Delay, Pid, {_, State}}) ->
+          io:format("odbc conn ~s ~p ~p ~p ~s ~p~n", [node(), N , N2, Delay, lists:nth(1,element(4,State)), lists:nth(2,element(4,State)) ]),
           true;
      (_) ->
           false
