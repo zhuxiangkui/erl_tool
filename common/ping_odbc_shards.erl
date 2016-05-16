@@ -29,7 +29,7 @@ end,
 DelayInfos = lists:map(GetDelayInfo, lists:seq(0,31)),
 lists:foreach(
   fun({N, Delay, {_, State}}) ->
-          io:format("odbc delay ~p ~p ~s ~p~n", [N, Delay, lists:nth(1,element(4,State)), lists:nth(2,element(4,State)) ])
+          io:format("odbc delay ~s ~p ~p ~s ~p~n", [node(), N, Delay, lists:nth(1,element(4,State)), lists:nth(2,element(4,State)) ])
   end, DelayInfos),
 
 ok.
