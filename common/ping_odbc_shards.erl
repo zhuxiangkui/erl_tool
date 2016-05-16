@@ -9,11 +9,11 @@ fun(N) ->
             {Time, {selected,[<<"1">>],[[<<"1">>]]}} ->
                 Time/1000;
             X ->
-                io:format("error ~p~n",[X]),
+                %% io:format("error ~w~n",[X]),
                 60001
         catch
             C:E ->
-                io:format("error ~p~n",[{C,E}]),
+                %% io:format("error ~w~n",[{C,E}]),
                 60002
         end
 end,
