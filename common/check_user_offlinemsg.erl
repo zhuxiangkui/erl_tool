@@ -2,7 +2,17 @@ io:format("User~p ~n", [Args]),
 
 [File, Out]  = Args,
 
-{ok, UserMIDs} = file:consult(File),
+{ok, UserMIDList} = file:consult(File),
+
+UserMIDs = lists:foldl(fun({U1, MID1}, Acc) ->
+                               case lists:keyfind(U1, 1, Acc) of
+                                   false ->
+                                       lists:keystore(U1, 1, Acc, {U1, [MID1]});
+                                   {_, OldList} ->
+                                       lists:keystore(U1, 1, Acc, {U1, [MID1|OldList]})
+                               end
+                       end, [], UserMIDList),
+
 
 Result = lists:map(fun({U, MIDs}) ->
                            JID = <<U/binary, "@easemob.com">>,
