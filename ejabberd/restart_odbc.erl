@@ -1,4 +1,4 @@
-echo(on),
+echo(off),
 F1 =
 fun( P ) ->
         {_,V} = process_info(P, dictionary),
