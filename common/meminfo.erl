@@ -2,7 +2,17 @@
 application:start(os_mon),
 memsup:set_procmem_high_watermark(0.01),
 
-io:format("{memory_data, ~p, ~p}.~n", [os:timestamp(), memsup:get_memory_data()]),
+MemData = memsup:get_memory_data(),
+io:format("{memory_data, ~p, ~p}.~n", [os:timestamp(), MemData]),
+
+case MemData of
+    {_,_, undefined} ->
+        ok;
+    {_,_, {WorstPid, WorstMem}} ->
+        io:format("{memory_data_worst, ~p, ~p}.~n",[os:timestamp(),
+                                              {WorstPid, WorstMem, process_info(WorstPid, [registered_name, initial_call, message_queue_len, current_stacktrace])}])
+end,
+
 io:format("{system_memory_data, ~p, ~p}.~n", [os:timestamp(), memsup:get_system_memory_data()]),
 
 %% Allocator info
