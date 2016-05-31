@@ -1,8 +1,17 @@
-## `check_conn_num.erl`
+## `get_num_of_conn.erl`
 
 参数： 无
 用途： 得到已经登录的用户个数，比 socket 的个数略少
 例子：
+
+## `get_num_of_workers.erl`
+
+参数： 无
+用途： 得到工作进程的个数
+例子：
+
+这个数值一般不会超过  100
+
 
 ## `check_store_nodes.erl`
 
