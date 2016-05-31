@@ -31,7 +31,7 @@
 
 ```
 ./erl_expect -noecho -sname msync@ebs-ali-beijing-msync1 -setcookie XXXXXXXX common/check_memory_binary.erl 3
-total binary = 2.4298200607299805 Mb; 
+total binary = 2.4298200607299805 Mb;
 Pid = <7094.1598.0>, Size = 1.18951416015625 Mb, Info = [ekaf_sup,
                                                          {current_function,
                                                           {gen_server,loop,6}},
@@ -127,3 +127,11 @@ STATUS  <7094.23800.1359>  waiting
 内置变量
 
 - `Args` 用户执行脚本的时候，输入的参数。
+
+## 目录
+
+ - `common` 下面是两种节点都可以使用的命令
+ - `ejabberd` 是 ejabberd 节点可以使用的命令
+ - `msync` 是 msync 下面可以使用的命令。
+
+参考不同目录下面的 README.md 看具体命令的用法。
