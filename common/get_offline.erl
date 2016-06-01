@@ -18,7 +18,7 @@ lists:foreach(fun(M) ->
                       lists:foreach(
                         fun(MID) ->
                                 io:format("       MID is ~p~n", [MID]),
-                                Meta = msync_msg:decode_meta(message_store:read(MID)),
+                                Meta = (catch msync_msg:decode_meta(message_store:read(MID))),
                                 io:format("       BODY is ~p~n", [Meta ])
                         end, List)
               end, Result).
