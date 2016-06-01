@@ -12,8 +12,9 @@ end,
 lists:foreach(
       fun(N) ->
 	      Name = ProcName(N),
+	      {links, Links}  = process_info(whereis(Name), links),
               {state, Servers, Workers, LstConnectTime}  = sys:get_state(Name),
-	      io:format("~p workers in ~s~n", [ queue:len(Workers), Name ])
+	      io:format("~p workers , ~p Links  in ~s~n", [ queue:len(Workers), erlang:length(Links), Name ])
       end, lists:seq(0, PoolSize -1)),
 
 
