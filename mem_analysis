@@ -1,8 +1,13 @@
 #!/usr/bin/env escript
 %% -*- erlang -*-
-%%! -smp enable -sname cover
+%%! -smp enable -sname mem_analyzer
 
--module(cover).
+%%
+% Analyzer to process output file of common/meminfo.erl,
+% which should be pre-processed by command:
+%   sed s/"<[0-9]*.[0-9]*.[0-9]*>"/pidxxx/
+%%
+
 -export([main/1, destruct/1]).
 
 main( [] ) ->
@@ -54,18 +59,23 @@ destruct(Terms) ->
                   end, Acc, List)
         end,
     Results =
-        lists:flatmap(fun
-                          ([{TS, _}]) when is_integer(TS)->
-                              [];
-                          ([{erts_mmap, Info} | Detail]) ->
+        lists:flatmap(fun({system_memory_data, _T, Info}) ->
+                              Record2Plist1(Info, [system, memory], []);
+                         ({alloc_info_mseg_alloc, _T, [{erts_mmap, Info} | Detail]}) ->
                               [Record2Plist1(Info, [erts_mmap, mseg_alloc], [])
                                | lists:flatmap(fun({instance, N, InfoI}) ->
-                                                   Record2Plist1(InfoI, [list_to_atom("i" ++ integer_to_list(N)), mseg_alloc], [])
-                                           end, Detail)];
-                          ([{instance, _, _} | _] = InstanceInfo) ->
+                                                       Record2Plist1(InfoI, [list_to_atom("i" ++ integer_to_list(N)), mseg_alloc], [])
+                                               end, Detail)];
+                         ({alloc_info_eheap_alloc, _T, [{instance, _, _} | _] = InstanceInfo}) ->
                               lists:flatmap(fun({instance, N, Info}) ->
-                                                Record2Plist1(Info, [list_to_atom("i" ++ integer_to_list(N)), eheap_alloc], [])
-                                        end, InstanceInfo)
+                                                    Record2Plist1(Info, [list_to_atom("i" ++ integer_to_list(N)), eheap_alloc], [])
+                                            end, InstanceInfo);
+                         ({alloc_info_binary_alloc, _T, [{instance, _, _} | _] = InstanceInfo}) ->
+                              lists:flatmap(fun({instance, N, Info}) ->
+                                                    Record2Plist1(Info, [list_to_atom("i" ++ integer_to_list(N)), binary_alloc], [])
+                                            end, InstanceInfo);
+                         ({_Other, _T, _Info}) ->
+                              []
                       end, Terms),
 
     lists:map(fun([{Name, Value}]) ->
