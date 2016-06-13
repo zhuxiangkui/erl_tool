@@ -1,7 +1,6 @@
 echo(off),
 [NewPoolSize0] =  Args,
 
-
 {ok, PropOld} = application:get_env(msync, user),
 PoolSize = proplists:get_value(pool_size, PropOld),
 
