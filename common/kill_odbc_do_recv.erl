@@ -11,7 +11,7 @@ lists:foreach(
 		 {p1_mysql_conn,loop,1,
 		  [{file,"src/p1_mysql_conn.erl"},
 		   {line,346}]}]},
-	       {message_queue_len,Len}] when Len > 1000 ->
+	       {message_queue_len,Len}] when Len > 500 ->
 		  io:format("kill ~p~n", [P]),
 		  exit(P, kill);
 	      _ ->
