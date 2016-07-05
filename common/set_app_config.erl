@@ -22,6 +22,7 @@ fun
 (muc_presence, V) when is_boolean(V) -> V; %% 是否使用presence
 (muc_presence_async, V) when is_boolean(V) -> V; %% 是否使用presence_async
 (use_multi_resource, V) when is_boolean(V) -> V;
+(send_chatroom_history, V) when is_boolean(V) -> V;
 (separate_worker, sub) -> sub; %% 设置worker node
 (separate_worker, all) -> all; %% 设置worker node
 (Key, Value) ->
