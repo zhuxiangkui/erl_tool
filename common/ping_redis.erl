@@ -54,6 +54,7 @@ EjabberdTables = lists:filter(
 		   TableExists,
 		   lists:map(ModName,
 			     [ mod_easemob_cache,
+                               mod_roster_cache,
 			       mod_session_redis,
 			       mod_message_log_redis,
 			       mod_privacy_cache,
