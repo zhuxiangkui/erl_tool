@@ -33,8 +33,8 @@ end,
 DelayInfos = lists:flatmap(GetDelayInfo, lists:seq(0,31)),
 LargeDelays = lists:filter(
                 fun({N, N2, Delay, Pid, {_, State}}) when Delay > 1000 ->
-                        io:format("restart delayed odbc conn ~s ~p ~p ~p ~s ~p~n", [node(), N , N2, Delay, lists:nth(1,element(4,State)), lists:nth(2,element(4,State)) ]),
-                        Pid ! stop,
+                        io:format("restart delayed odbc conn ~s ~p ~p ~p ~s ~p ~p~n", [node(), N , N2, Delay, lists:nth(1,element(4,State)), lists:nth(2,element(4,State)), Pid ]),
+                        exit(Pid, kill),
                         true;
                    (_) ->
                         false

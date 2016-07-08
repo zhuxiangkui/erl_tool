@@ -2,7 +2,9 @@ echo(off),
 [GroupId] = Args,
 Worker = mod_easemob_cache_query_cmd:client(any),
 sys:get_state(Worker),
-eredis:q(Worker, [hgetall, iolist_to_binary(["im:", GroupId])]),
+Result = eredis:q(Worker, [hgetall, iolist_to_binary(["im:", GroupId])]),
+io:format("Result = ~p~n",[Result]),
+
 case eredis:q(Worker, [zrange, iolist_to_binary(["im:", GroupId, ":affiliations"]), 0, -1]) of
     {ok, Affx} ->
 	io:format("Affiliations in DB: ~p~n", [erlang:length(Affx)]),
