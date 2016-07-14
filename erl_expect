@@ -41,10 +41,10 @@ main(Args) ->
         {true, pong} ->
             ok;
         {false,pong} ->
-            io:format("Failed to connect to node ~p .\n", [TargetNode]),
+            io:format("error: Failed to connect to node ~p .\n", [TargetNode]),
             halt(1);
         {_, pang} ->
-            io:format("Node ~p not responding to pings.\n", [TargetNode]),
+            io:format("error: Node ~p not responding to pings.\n", [TargetNode]),
             halt(1)
     end,
 
