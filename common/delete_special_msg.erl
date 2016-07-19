@@ -9,21 +9,25 @@ FilterStr1 = <<"Congratulations!!!\n\nMusical.ly reaches 100 million users. \n\n
 FilterStr2 = <<"We are sorry to inform you that your last verification attempt was unsuccessful.\n\nPlease retry by visiting www.MuserVoice.com and resubmitting your application.">>,
 lists:foreach(
     fun({Cid, Mid}) ->
-        Body = message_store:read_message(Mid),
-        %io:format("Body: ~p~n", [Body]),
-        case binary:match(Body, [FilterStr1, FilterStr2]) of
-            nomatch ->
+        case message_store:read_message(Mid) of
+            not_found ->
                 ignore;
-            _ ->
-                io:format("[Deleted]: Mid: ~p, Body: ~p~n", [Mid, Body]),
-                case RunMode of
-                    "delete" ->
-                        message_store:delete_message(To, undefined, Cid, Mid),
-                        easemob_message_body:delete_message(Mid);
-                    "dry_run" ->
+            Body ->
+                %io:format("Body: ~p~n", [Body]),
+                case binary:match(Body, [FilterStr1, FilterStr2]) of
+                    nomatch ->
                         ignore;
                     _ ->
-                        ignore
+                        io:format("[Deleted]: Mid: ~p, Body: ~p~n", [Mid, Body]),
+                        case RunMode of
+                            "delete" ->
+                                message_store:delete_message(To, undefined, Cid, Mid),
+                                easemob_message_body:delete_message(Mid);
+                            "dry_run" ->
+                                ignore;
+                            _ ->
+                                ignore
+                        end
                 end
         end
     end, CidMidList).
