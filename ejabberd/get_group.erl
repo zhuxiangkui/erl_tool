@@ -2,9 +2,8 @@ echo(off),
 [GroupId] = Args,
 Worker = mod_easemob_cache_query_cmd:client(any),
 sys:get_state(Worker),
-Result = eredis:q(Worker, [hgetall, iolist_to_binary(["im:", GroupId])]),
-io:format("Result = ~p~n",[Result]),
-
+Detail = eredis:q(Worker, [hgetall, iolist_to_binary(["im:", GroupId])]),
+io:format("detail = ~p~n",[Detail]),
 case eredis:q(Worker, [zrange, iolist_to_binary(["im:", GroupId, ":affiliations"]), 0, -1]) of
     {ok, Affx} ->
 	io:format("Affiliations in DB: ~p~n", [erlang:length(Affx)]),
@@ -27,7 +26,7 @@ case muc_mnesia:rpc_get_online_room(iolist_to_binary([GroupId]), <<"conference.e
 		lists:foreach(fun(P2) ->
 				      io:format("\t~p~n", [P2])
 			      end, Aff);
-	    Else -> 
+	    Else ->
 		io:format("error = ~p~n", [Else])
 	end;
     _ ->
