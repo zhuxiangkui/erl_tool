@@ -1,3 +1,7 @@
+%%%
+% 功能：得到某一个节点的所有 app config
+% 参数：无
+%%%
 echo(off),
 
 lists:foreach(
