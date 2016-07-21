@@ -1,4 +1,8 @@
 echo(off),
+
+%% To0: musically#musically_n_100000240237219840@easemob.com
+%% RunMode: delete | dry_run
+
 RunMode = Args,
 
 DoDelete =
@@ -41,7 +45,7 @@ LoopDelete =
                 ignore;
             {error, _} ->
                 ReadStdIO();
-            To0 ->
+            To0 ->  %% To0: musically#musically_n_100000240237219840@easemob.com
                 DoDelete(list_to_binary(string:strip(To0, both, $\n))),
                 ReadStdIO()
         end

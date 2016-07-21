@@ -1,5 +1,8 @@
 echo(off),
 
+%% To0: musically#musically_n_100000240237219840@easemob.com
+%% RunMode: delete | dry_run
+
 [To0, RunMode] = Args,
 To = list_to_binary(To0),
 %io:format("To: ~p~n", [To]),
