@@ -1,3 +1,5 @@
+%% ./erl_expect -sname msync@sdb-ali-hangzhou-ejabberd5 msync/set_shaper.erl normal 2000 rest 2000
+
 echo(off),
 
 ToTupleList =
