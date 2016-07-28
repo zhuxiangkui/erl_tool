@@ -21,7 +21,7 @@ if  QueueLength > Threshold ->
 	{Level, _Traces} = lager_config:get(loglevel, {0,[]}),
 	case Level == 127 of
 	    false ->
-		io:format("error: log level = ~p~n", [Level]);
+		io:format("error: log level = ~p, queue len = ~p~n", [Level, QueueLength]);
 	    true ->
 		io:format("info: log level = ~p, queue len = ~p~n", [Level, QueueLength])
 	end
