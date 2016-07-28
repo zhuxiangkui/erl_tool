@@ -1,3 +1,3 @@
-# sh vip6.sh vip6-ali-beijing-ejabberd101 common/get_sendmsg_status.erl
+# sh vip6.sh ejabberd@vip6-ali-beijing-ejabberd101 common/get_sendmsg_status.erl
 echo $1
-./erl_expect -sname ejabberd@$1 -setcookie 'EASEMOBAAAAAAAAAAEBS' $2
+./erl_expect -sname $* -setcookie 'EASEMOBAAAAAAAAAAEBS'
