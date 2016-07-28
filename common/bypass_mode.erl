@@ -23,7 +23,8 @@ fun(Value) ->
             true ->
                 extauth_rpc:extauth_opts(<<"easemob.com">>, bypassed, Value);
             false ->
-                msync_user:auth_opt(bypassed, Value)
+                Module = application:get_env(msync, user_auth_module, msync_user),
+                Module:auth_opt(bypassed, Value)
         end
 end,
 
@@ -33,7 +34,8 @@ fun() ->
             true ->
                 extauth_rpc:extauth_opts(<<"easemob.com">>, bypassed);
             false ->
-                msync_user:auth_opt(bypassed)
+                Module = application:get_env(msync, user_auth_module, msync_user),
+                Module:auth_opt(bypassed)
         end
 end,
 
