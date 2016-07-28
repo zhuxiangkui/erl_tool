@@ -1,3 +1,12 @@
+
+% input: [all | sub | muc] ++ NodeList
+%
+% op: for ejabberd
+%    1) enable blackhole mode, or restore from blackhole
+%    2) could also check which nodes not response to ping
+%
+% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' ejabberd/set_worker_nodes.erl all ejabberd@sdb-ali-hangzhou-ejabberd2
+
 echo(off),
 {Type, Nodes}  =
 case Args of

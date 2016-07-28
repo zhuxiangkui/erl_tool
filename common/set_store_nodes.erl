@@ -1,3 +1,11 @@
+% input: [all | sub | muc] ++ NodeList
+%
+% op:
+%    1) enable blackhole mode, or restore from blackhole
+%    2) could also check which nodes not response to ping
+%
+% e.g.: ./erl_expect -sname msync@sdb-ali-hangzhou-ejabberd5 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/set_store_nodes.erl all ejabberd@sdb-ali-hangzhou-ejabberd2
+
 echo(off),
 {Type, Nodes}  =
 case Args of

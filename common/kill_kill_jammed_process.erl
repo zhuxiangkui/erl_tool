@@ -1,3 +1,10 @@
+
+% input: Len
+%
+% op: kill process whose message_queue_len is large than Len
+%
+% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/kill_kill_jammed_process.erl Len
+
 echo(on),
 
 [Len0] = Args,

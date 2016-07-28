@@ -1,4 +1,9 @@
-%% ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd4 common/set_ssdb.erl write
+% input: write | read | close_write | close_read
+%
+% op: ssdb control
+%
+% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd4 common/set_ssdb.erl write
+
 
 echo(off),
 

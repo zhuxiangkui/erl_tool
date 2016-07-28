@@ -1,3 +1,10 @@
+
+% input: none
+%
+% op: check whether is at bypass mode
+%
+% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/check_bypass.erl
+
 echo(off),
 
 IsEjabberd =

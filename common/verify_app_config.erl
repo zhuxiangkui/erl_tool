@@ -1,3 +1,10 @@
+
+% input: BaseNode
+%
+% op: check whether the config is same with BaseNode's config
+%
+% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/verify_app_config.erl BaseNode
+
 echo(off),
 [BaselineNode0] = Args,
 BaselineNode = list_to_atom(BaselineNode0),

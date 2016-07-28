@@ -1,3 +1,10 @@
+
+% input: none
+%
+% op: add msg log hook for ejabberd
+%
+% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' ejabberd/start_message_log.erl
+
 echo(on),
 Host = <<"easemob.com">>,
 mod_message_log:add_hook(Host, outgoing_msg),

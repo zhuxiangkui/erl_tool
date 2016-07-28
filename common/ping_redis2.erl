@@ -2,8 +2,6 @@ echo(off),
 {A, B, C} = os:timestamp(),
 random:seed(A, B, C),
 
-application:get_env(message_store, redis),
-
 {ok, Tables} = application:get_env(message_store, redis),
 
 

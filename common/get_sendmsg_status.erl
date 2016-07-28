@@ -1,16 +1,8 @@
-%%--------------------------------------------------------------------
-%% @doc common/get_sendmsg_status.erl
-%%
-%% @spec input: none
-%%
-%% @spec example: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd4 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/get_sendmsg_status.erl
-%%
-%% @spec op:
-%%
-%% @spec result:
-%%
-%% @end
-%%--------------------------------------------------------------------
+% input: none
+%
+% op: get max and cur length for each queue
+%
+% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd4 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/get_sendmsg_status.erl
 
 echo(off),
 

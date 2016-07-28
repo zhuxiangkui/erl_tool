@@ -1,4 +1,9 @@
-%% ./erl_expect -sname msync@sdb-ali-hangzhou-ejabberd5 msync/set_shaper.erl normal 2000 rest 2000
+% input: normal, value, rest, value, ...
+%
+% op: set shaper param values for msync
+%
+% e.g.: ./erl_expect -sname msync@sdb-ali-hangzhou-ejabberd5 -setcookie 'LTBEXKHWOCIRRSEUNSYS' msync/set_shaper.erl normal 2000 rest 2000
+
 
 echo(off),
 

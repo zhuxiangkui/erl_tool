@@ -1,3 +1,9 @@
+% input: GroupId
+%
+% op: get status of GroupId
+%
+% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' ejabberd/get_group.erl xxx
+
 echo(off),
 [GroupId] = Args,
 Worker = mod_easemob_cache_query_cmd:client(any),

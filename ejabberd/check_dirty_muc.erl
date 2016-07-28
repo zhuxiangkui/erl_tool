@@ -1,3 +1,10 @@
+
+% input: none
+%
+% op: get dirty muc
+%
+% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' ejabberd/check_dirty_muc.erl
+
 timer:sleep(10000),
 lists:foreach(
   fun({_,{Name, Host},Pid}) ->

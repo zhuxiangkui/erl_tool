@@ -1,3 +1,10 @@
+
+% input: RunMode
+%
+% op: filter and delete msg according to given keyword, but UserDomain was read from stdin
+%
+% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/delete_special_msg_io.erl RunMode
+
 echo(off),
 
 %% To0: musically#musically_n_100000240237219840@easemob.com

@@ -1,3 +1,10 @@
+
+% input: AppKey
+%
+% op: set owner if AppKey has group without owner
+%
+% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/set_chatroom_owner.erl AppKey
+
 echo(off),
 case Args of
     [AppKeyArgs] ->

@@ -1,3 +1,10 @@
+
+% input: none
+%
+% op: restart ekaf
+%
+% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/restart_ekaf.erl
+
 echo(on),
 {ok, LogKafkaConfig} = application:get_env(message_store, log_kafka),
 OutgoingMsgTopic = proplists:get_value(kafka_outgoing_msg_topic, LogKafkaConfig, <<"ejabberd-chat-messages">>),

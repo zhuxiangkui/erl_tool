@@ -1,3 +1,9 @@
+% input: AppKey, ConfigName, ConfigValue
+%
+% op: set ConfigName = ConfigValue for AppKey
+%
+% e.g.: ./erl_expect -sname msync@sdb-ali-hangzhou-ejabberd5 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/set_app_config.erl easemob-demo#chatdemoui check_nickname false
+
 echo(off),
 
 Check =

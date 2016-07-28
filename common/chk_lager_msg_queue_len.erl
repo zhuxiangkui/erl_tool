@@ -1,3 +1,9 @@
+% input: Threshold -- integer()
+%
+% op: LogLevel = critical if lager QueueLength > Threshold(which is input), else LogLevel = info
+%
+% e.g.: ./erl_expect -sname msync@sdb-ali-hangzhou-ejabberd5 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/chk_lager_msg_queue_len.erl 10000
+
 echo(off),
 
 [Threshold0] = Args,

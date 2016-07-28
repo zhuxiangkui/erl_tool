@@ -1,3 +1,10 @@
+
+% input: MID
+%
+% op: read msg body according to MID
+%
+% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/read_message.erl MID
+
 echo(off),
 [ID] =  Args ,
 

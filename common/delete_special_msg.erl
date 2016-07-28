@@ -1,3 +1,10 @@
+
+% input: UserDomain, RunMode
+%
+% op: filter and delete msg according to given keyword
+%
+% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/delete_special_msg.erl UserDomain RunMode
+
 echo(off),
 
 %% To0: musically#musically_n_100000240237219840@easemob.com
@@ -24,8 +31,7 @@ lists:foreach(
                         io:format("[Deleted]: Mid: ~p, Body: ~p~n", [Mid, Body]),
                         case RunMode of
                             "delete" ->
-                                message_store:delete_message(To, undefined, Cid, Mid),
-                                easemob_message_body:delete_message(Mid);
+                                message_store:delete_message(To, undefined, Cid, Mid);
                             "dry_run" ->
                                 ignore;
                             _ ->
