@@ -1,4 +1,4 @@
-echo(on),
+echo(off),
 io:format("Input Muc Room like easemob-demo#chatdemoui_group1~n", []),
 [MucList] = Args,
 Muc = list_to_binary(MucList),
