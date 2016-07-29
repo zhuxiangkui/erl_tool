@@ -17,11 +17,11 @@ fun() ->
         end
 end,
 
-case IsEjabberd() of
+Type = case IsEjabberd() of
     true ->
         application:get_env(ejabberd, session_db_type, mnesia);
     false ->
         easemob_session:get_session_db_type()
 end,
-
+io:format("session_db_type = ~p~n",[Type]),
 ok.
