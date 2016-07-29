@@ -22,6 +22,6 @@ case IsEjabberd() of
         ejabberd_sm:set_session_db_type(mnesia);
     false ->
         easemob_session:set_session_db_type(mnesia)
-end
+end,
 
 ok.

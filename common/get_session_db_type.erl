@@ -22,6 +22,6 @@ case IsEjabberd() of
         application:get_env(ejabberd, session_db_type, mnesia);
     false ->
         easemob_session:get_session_db_type()
-end
+end,
 
 ok.
