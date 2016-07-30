@@ -1,3 +1,4 @@
 [User] = Args,
 io:format("User~p ~n", [User]),
-mod_privacy:read_privacy_cache(User, <<"easemob.com">>).
+PrivacyList = mod_privacy:read_privacy_cache(iolist_to_binary(User), <<"easemob.com">>),
+io:format("PrivacyList: ~p ~n", [PrivacyList]).
