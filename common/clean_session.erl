@@ -11,7 +11,9 @@ case Args of
                                       ejabberd_store:store_rpc(all, mnesia, activity,
                                                                [ejabberd_store:op_by_consistency(),
                                                                 fun mnesia:delete/1,
-                                                                [{session, USR}], mnesia_frag]);
+                                                                [{session, USR}], mnesia_frag]),
+				      mod_session_redis:logout_session_redis(<<"easemob.com">>, User, Res),
+				      io:format("clean undefined session:~p ~n", [Res]);
                                   _ ->
                                       ignore
                               end
