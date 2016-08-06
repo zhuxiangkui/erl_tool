@@ -37,7 +37,7 @@ fun(Table) ->
 			    PingRedisWorker(Table, N, Worker)
 		    catch
 			C2:E2 ->
-			    io:format("error: ~p:~p no worker for N = ~p, Table = ~p~n", [C2, E2, N, Table])
+			    io:format("error:~p ~p:~p no worker for N = ~p, Table = ~p~n", [node(), C2, E2, N, Table])
 		    end
 	    end,
 	try 
@@ -46,7 +46,7 @@ fun(Table) ->
 		lists:foreach(PingRedisN, lists:seq(1, PoolSize))
 	catch
 	    C1:E1 ->
-		io:format("error: ~p:~p message_store is not started, no worker pool of ~p~n", [C1, E1, Table])
+		io:format("error:~p ~p:~p message_store is not started, no worker pool of ~p~n", [node(), C1, E1, Table])
 	end
 end,
 
