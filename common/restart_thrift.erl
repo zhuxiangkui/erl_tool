@@ -25,6 +25,7 @@ case IsEjabberd() of
         X2 = extauth_rpc:stop(<<"easemob.com">>),
         io:format("extauth_rpc:stop => ~p~n",[X2]),
         X3 = (catch ets:delete_all_objects(extauth_opts)),
+	timer:sleep(10000),
         io:format("ets:delete_all_objects => ~p~n",[X3]),
         X4 = extauth_rpc:start(<<"easemob.com">>),
         io:format("ets:delete_all_objects => ~p~n",[X4]);
