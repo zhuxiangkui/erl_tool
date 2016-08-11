@@ -22,8 +22,13 @@ lists:map(fun(Index) ->
 UserAuth = {'UserAuth',{'EID',<<"easemob-demo#chatdemoui">>,<<"mt001">>},<<"asd">>,undefined},
 Clients =
 lists:flatmap(fun(P) ->
-                      {_, _, Workers, _} = sys:get_state(whereis(P)),
-                      queue:to_list(Workers)
+                      case catch sys:get_state(whereis(P)) of
+                          {_, _, Workers, _} ->
+                              queue:to_list(Workers);
+                          Exception ->
+                              io:format("Node:~p Exception:~p ~n", [node(), Exception]),
+                              []
+                      end
               end, Processes),
 Ret =
 lists:filtermap(fun(Client) ->
