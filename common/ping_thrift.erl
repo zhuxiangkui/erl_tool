@@ -43,8 +43,10 @@ lists:filtermap(fun(Client) ->
                 end, Clients),
 case Ret == [] of
     true ->
-        io:format("Node:~p every client is all right ~p ~n", [node(), erlang:length(Clients)]);
+        io:format("~n Node:~p every client is all right ~p available rate ~p% ~n", [node(), erlang:length(Clients), 100]);
     false ->
-        io:format("Node:~p there are ~p all clients is ~p ~n", [node(), erlang:length(Ret), erlang:length(Clients)])
+        FailedLen = erlang:length(Ret),
+        AllLen = erlang:length(Clients),
+        io:format("~n Node:~p Failed ~p All clients is ~p AvailableRate ~p % ~n", [node(), FailedLen, AllLen, (AllLen - FailedLen) / AllLen * 100])
 end,
 ok.
