@@ -26,7 +26,7 @@ lists:flatmap(fun(P) ->
                           {_, _, Workers, _} ->
                               queue:to_list(Workers);
                           Exception ->
-                              io:format("Node:~p Exception:~p ~n", [node(), Exception]),
+                              io:format("Node:~p P:~p Exception:~p ~n", [node(), P, Exception]),
                               []
                       end
               end, Processes),
@@ -48,7 +48,7 @@ lists:filtermap(fun(Client) ->
                 end, Clients),
 case Ret == [] of
     true ->
-        io:format("~n Node:~p every client is all right ~p available rate ~p% ~n", [node(), erlang:length(Clients), 100]);
+        io:format("~n Node:~p every client is all right ~p available rate ~p % ~n", [node(), erlang:length(Clients), 100]);
     false ->
         FailedLen = erlang:length(Ret),
         AllLen = erlang:length(Clients),
