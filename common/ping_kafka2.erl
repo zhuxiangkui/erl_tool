@@ -12,7 +12,7 @@ fun(Table, N, Pid) ->
             ChatMsgOutgoing = {chatmsg, Timestamp, <<"chat">>, outgoing, From, To, <<"kafka message body 1">>, <<"kafka_mid1">>},
             case timer:tc(gen_server,call,[Pid, ChatMsgOutgoing]) of
                 {Time, ok} ->
-                    io:format("worker is all right: ~w ~w ms ~w ~w~n",[node(), Time/1000, N,Pid]),
+                    %io:format("worker is all right: ~w ~w ms ~w ~w~n",[node(), Time/1000, N,Pid]),
                     ok;
                 {Time, Value} ->
                     io:format("error: worker is fail: ~w Reason: ~p ~w ~w ~w~n",[node(), Value, 50000, N,Pid])
@@ -70,7 +70,7 @@ fun(T)->
             ekaf_socket:close(Sock),
             Partitions
         catch _C:_E ->
-                  server_down
+                  kafka_server_down
         end
 end,
 PingWorker =
@@ -109,7 +109,8 @@ lists:foreach(
                     fun(W) ->
                             case PingWorker(T, W, Partitions) of
                                 true ->
-                                    io:format("ping topic ~p worker ~p ok~n", [T, W]);
+                                    %io:format("ping topic ~p worker ~p ok~n", [T, W]),
+                                    ok;
                                 false ->
                                     io:format("error: ping topic ~p worker ~p leader is old~n", [T, W]);
                                 E ->
