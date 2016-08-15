@@ -15,11 +15,11 @@ fun(Table, N, Pid) ->
                     %io:format("worker is all right: ~w ~w ms ~w ~w~n",[node(), Time/1000, N,Pid]),
                     ok;
                 {Time, Value} ->
-                    io:format("error: worker is fail: ~w Reason: ~p ~w ~w ~w~n",[node(), Value, 50000, N,Pid])
+                    io:format("error: ~p worker is fail: Reason: ~p ~p ~p ~p~n",[node(), Value, 50000, N,Pid])
             end
 	catch
 	    Class:Type ->
-		io:format("error: ~w ~w ~w ~w~n",[node(), 60000, N,Pid])
+		io:format("error: ~p ~p ~p ~p~n",[node(), 60000, N,Pid])
 	end
 end,
 
@@ -32,7 +32,7 @@ fun(N) ->
                 PingRedisWorker(log_kafka, N, Worker)
         catch
             C2:E2 ->
-                io:format("error:~p ~p:~p ~pno worker ~n", [node(), C2, E2, N])
+                io:format("error: ~p ~p:~p ~pno worker ~n", [node(), C2, E2, N])
         end
 end,
 lists:foreach(PingKafkaN, lists:seq(1, PoolSize)),
@@ -103,7 +103,7 @@ lists:foreach(
           Partitions = GetPartitions(T),
           case Partitions of
               [] ->
-                  io:format("error: ping topic ~p failed~n", [T]);
+                  io:format("error: ~p ping topic ~p failed~n", [node(), T]);
               [_H|_T] ->
                   lists:foreach(
                     fun(W) ->
@@ -112,13 +112,13 @@ lists:foreach(
                                     %io:format("ping topic ~p worker ~p ok~n", [T, W]),
                                     ok;
                                 false ->
-                                    io:format("error: ping topic ~p worker ~p leader is old~n", [T, W]);
+                                    io:format("error: ~p ping topic ~p worker ~p leader is old~n", [node(), T, W]);
                                 E ->
-                                    io:format("error: ping topic ~p worker ~p ~p~n", [T, W, E])
+                                    io:format("error: ~p ping topic ~p worker ~p ~p~n", [node(), T, W, E])
                             end
                     end, Workers);
               Error ->
-                  io:format("error: ping topic ~p ~p~n", [T, Error])
+                  io:format("error: ~p ping topic ~p ~p~n", [node(), T, Error])
           end
   end, Topics),
 
