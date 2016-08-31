@@ -6,7 +6,17 @@
 
 echo(off),
 ok = config:load_env("/data/apps/opt/ejabberd/etc/ejabberd/message_store.config"),
-case application:get_env(ejabberd, is_conn, false) of
+
+IsOnlyConn =
+application:get_env(ejabberd, is_conn, false) andalso
+application:get_env(ejabberd, is_webim, true) == false andalso
+application:get_env(ejabberd, is_imapi, true) == false andalso
+application:get_env(ejabberd, is_work, true) == false andalso
+application:get_env(ejabberd, is_rest, true) == false andalso
+application:get_env(ejabberd, is_session, true) == false andalso
+application:get_env(ejabberd, is_muc, true) == false,
+
+case IsOnlyConn of
     true ->
         Md5Expired = [<<"78ae11a8a4b7b5552d42aa7b579b3ba9">>],
         UpdateModules = [ejabberd_c2s];
@@ -23,7 +33,8 @@ lists:map(fun(Module) ->
                   M1 = Module:module_info(md5),
                   p1_sha:to_hexlist(M1)
           end, UpdateModules),
-case application:get_env(ejabberd, is_conn, false) of
+
+case IsOnlyConn of
     true ->
         ignore;
     false ->
