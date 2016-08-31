@@ -23,6 +23,13 @@ lists:map(fun(Module) ->
                   M1 = Module:module_info(md5),
                   p1_sha:to_hexlist(M1)
           end, UpdateModules),
+case application:get_env(ejabberd, is_conn, false) of
+    true ->
+        ignore;
+    false ->
+        ok = ejabberd_config:load_file("/data/apps/opt/ejabberd/etc/ejabberd/ejabberd.yml"),
+        restart_module:start(mod_multi_devices)
+end,
 case Md5List == Md5Expired of
     true ->
         io:format("update Ejabberd :~p right, update list:~p ~n", [erlang:node(), UpdateModules]);
