@@ -8,6 +8,7 @@ echo(off),
 
 Check =
 fun
+(use_multi_devices, V) when is_boolean(V) -> V; %% : true multi devices
 (apns_mute, V) when is_boolean(V) -> V; %% : true apns num
 (use_roster, V) when is_boolean(V) -> V; %% : true 好友
 (use_keyword_scan, V) when is_boolean(V) -> V; %% : false  关键字
