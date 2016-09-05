@@ -1,3 +1,10 @@
+
+% input: all | sub
+%
+% op: restart worker nodes for ejabberd
+%
+% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' ejabberd/get_worker_nodes.erl all
+
 echo(off),
 Type =
 case Args of

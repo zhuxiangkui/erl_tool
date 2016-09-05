@@ -1,3 +1,10 @@
+
+% input: none
+%
+% op: get session max / min / avg delay
+%
+% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/session_delay.erl
+
 echo(off),
 
 GetIt = 

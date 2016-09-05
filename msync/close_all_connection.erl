@@ -1,3 +1,9 @@
+% input: integer(), useless currently
+%
+% op: close msync c2s all tcp connections
+%
+% e.g.: ./erl_expect -sname msync@sdb-ali-hangzhou-ejabberd5 -setcookie 'LTBEXKHWOCIRRSEUNSYS' msync/close_all_connection.erl 1
+
 [Interval0] = Args,
 Interval = list_to_integer(Interval0),
 supervisor:terminate_child(msync_sup, msync_server),

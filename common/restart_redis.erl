@@ -1,3 +1,9 @@
+% input: none
+%
+% op: restart redis
+%
+% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/restart_redis.erl
+
 echo(on),
 
 Restart = fun(mod_easemob_cache) ->

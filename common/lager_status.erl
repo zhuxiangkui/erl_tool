@@ -1,3 +1,10 @@
+
+% input: none
+%
+% op: check lager status
+%
+% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/lager_status.erl
+
 echo(off),
 
 {Level, Traces} = lager_config:get(loglevel, {0,[]}),

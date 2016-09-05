@@ -1,3 +1,9 @@
+% input: enable | disable
+%
+% op: enable or disable bypass mode for ejabberd / msync
+%
+% e.g.: ./erl_expect -sname msync@sdb-ali-hangzhou-ejabberd5 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/bypass_mode.erl disable
+
 echo(off),
 
 Enabled =
@@ -23,7 +29,12 @@ fun(Value) ->
             true ->
                 extauth_rpc:extauth_opts(<<"easemob.com">>, bypassed, Value);
             false ->
-                msync_user:auth_opt(bypassed, Value)
+                case Value of
+                    true ->
+                        application:set_env(msync, user_auth_module, blackhole);
+                    false ->
+                        msync_user:auth_opt(bypassed, Value)
+                end
         end
 end,
 

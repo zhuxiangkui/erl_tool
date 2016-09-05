@@ -1,3 +1,9 @@
+% input: none
+%
+% op: check if all queues are ok
+%
+% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' ejabberd/check_module_sendmsg.erl
+
 echo(on),
 
 GetTopics =

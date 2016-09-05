@@ -1,3 +1,10 @@
+
+% input: JID
+%
+% op: get offline msgs for JID
+%
+% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/get_offline.erl JID
+
 [JID,Resource] = case Args of
                      [ID] ->
                          [list_to_binary(ID), <<"mobile">>];

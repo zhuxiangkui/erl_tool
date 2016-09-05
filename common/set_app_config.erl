@@ -1,7 +1,15 @@
+% input: AppKey, ConfigName, ConfigValue
+%
+% op: set ConfigName = ConfigValue for AppKey
+%
+% e.g.: ./erl_expect -sname msync@sdb-ali-hangzhou-ejabberd5 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/set_app_config.erl easemob-demo#chatdemoui check_nickname false
+
 echo(off),
 
 Check =
 fun
+(use_multi_devices, V) when is_boolean(V) -> V; %% : true multi devices
+(apns_mute, V) when is_boolean(V) -> V; %% : true apns num
 (use_roster, V) when is_boolean(V) -> V; %% : true 好友
 (use_keyword_scan, V) when is_boolean(V) -> V; %% : false  关键字
 (roster_only, V) when is_boolean(V) -> V; %% : false roster only 限制
@@ -25,6 +33,7 @@ fun
 (send_chatroom_history, V) when is_boolean(V) -> V;
 (separate_worker, sub) -> sub; %% 设置worker node
 (separate_worker, all) -> all; %% 设置worker node
+(check_nickname, V) when is_boolean(V) -> V; %% : true -> check dl_userid and dl_nickname
 (Key, Value) ->
     io:format("error: invalid config name or value  ~s=~s~n",[Key, Value]),
     exit(normal)

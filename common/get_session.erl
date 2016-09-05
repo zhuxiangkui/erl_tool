@@ -1,3 +1,10 @@
+
+% input: JID
+%
+% op: get session for JID
+%
+% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/get_session.erl JID
+
 echo(on),
 [JID,Resource] = case Args of
                      [ID] ->

@@ -1,3 +1,10 @@
+
+% input: ID
+%
+% op: get time info from ID
+%
+% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/explain_id.erl ID
+
 echo(off),
 [ID0] = Args,
 Id = list_to_integer(ID0),
