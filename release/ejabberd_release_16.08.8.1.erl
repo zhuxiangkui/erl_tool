@@ -21,8 +21,8 @@ case IsOnlyConn of
         Md5Expired = [<<"aa9425e6be9296dbd86fb3334ebe2d46">>],
         UpdateModules = [ejabberd_c2s];
     false ->
-        Md5Expired = [<<"aa9425e6be9296dbd86fb3334ebe2d46">>, <<"eef7cd09b61dc63e1fd1edcf98805565">>],
-        UpdateModules = [ejabberd_c2s, app_config]
+        Md5Expired = [<<"eef7cd09b61dc63e1fd1edcf98805565">>, <<"9c6f7479b2668d17090352a119bc6592">>],
+        UpdateModules = [app_config, ejabberd_auth]
 end,
 lists:foreach(fun(Module) ->
                       code:purge(Module),
