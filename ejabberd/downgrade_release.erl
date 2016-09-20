@@ -1,10 +1,10 @@
 echo(on),
 [Vsn] = Args,
 
-{ok, _} = file:copy("/data/apps/opt/ejabberd/etc/ejabberd/ejabberd.yml." ++ Vsn,
+{ok, _} = file:copy("/data/apps/opt/ejabberd/etc/ejabberd/" ++ Vsn ++ "/ejabberd.yml",
                     filename:join(["/data/apps/opt/ejabberd/etc/ejabberd", "ejabberd.yml"])),
 
-{ok, _} = file:copy("/data/apps/opt/ejabberd/etc/ejabberd/message_store.config." ++ Vsn,
+{ok, _} = file:copy("/data/apps/opt/ejabberd/etc/ejabberd/" ++ Vsn ++ "/message_store.config",
                     filename:join(["/data/apps/opt/ejabberd/etc/ejabberd", "message_store.config"])),
 
 try  release_handler:install_release(Vsn) of
