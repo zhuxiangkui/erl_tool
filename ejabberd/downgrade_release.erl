@@ -1,5 +1,12 @@
 echo(on),
 [Vsn] = Args,
+
+{ok, _} = file:copy("/data/apps/opt/ejabberd/etc/ejabberd/ejabberd.yml." ++ Vsn,
+                    filename:join(["/data/apps/opt/ejabberd/etc/ejabberd", "ejabberd.yml"])),
+
+{ok, _} = file:copy("/data/apps/opt/ejabberd/etc/ejabberd/message_store.config." ++ Vsn,
+                    filename:join(["/data/apps/opt/ejabberd/etc/ejabberd", "message_store.config"])),
+
 try  release_handler:install_release(Vsn) of
      {ok, OldVsn1, []} ->
         release_handler:make_permanent(Vsn),
@@ -9,4 +16,3 @@ try  release_handler:install_release(Vsn) of
 catch
     Class:Error -> {Class, Error}
 end.
-%% ok = release_handler:make_permanent(Vsn).
