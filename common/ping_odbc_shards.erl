@@ -7,25 +7,31 @@ fun(N) ->
         lists:filtermap(
           fun({N2, Worker})
                 when is_pid(Worker)->
-                  State = sys:get_state(Worker),
-                  %% # {state,<7121.9910.3894>,mysql,
-                  %% #                             [<<"rds4077hl6n7cv79795i.mysql.rds.aliyuncs.com">>,
-                  %% #                              3306,<<"ejabberd">>,<<"ejabberd">>,
-                  %% #                              <<"ejabberd">>],
-                  %% #                             30000000,1000,
-                  %% #                             {0,{[],[]}}}1
-                  Delay = try timer:tc(gen_fsm,sync_send_event,[Worker, {sql_cmd, SQL, os:timestamp()}, 5000]) of
-                              {Time, {selected,[<<"1">>],[[<<"1">>]]}} ->
-                                  Time/1000;
-                              X ->
-                                  %% io:format("error ~w~n",[X]),
-                                  60001
-                          catch
-                              C:E ->
-                                  %% io:format("error ~w~n",[{C,E}]),
-                                  60002
-                          end,
-                  {true, {N, N2, Delay, Worker, State}};
+                  case catch sys:get_state(Worker) of
+                      {'EXIT', _} ->
+                          io:format("restart delayed odbc conn ~s ~p ~p ~p ~n", [node(), N , N2,  Worker ]),
+                          exit(Worker, kill),
+                          false;
+                      State ->
+                          %% # {state,<7121.9910.3894>,mysql,
+                          %% #                             [<<"rds4077hl6n7cv79795i.mysql.rds.aliyuncs.com">>,
+                          %% #                              3306,<<"ejabberd">>,<<"ejabberd">>,
+                          %% #                              <<"ejabberd">>],
+                          %% #                             30000000,1000,
+                          %% #                             {0,{[],[]}}}1
+                          Delay = try timer:tc(gen_fsm,sync_send_event,[Worker, {sql_cmd, SQL, os:timestamp()}, 5000]) of
+                                      {Time, {selected,[<<"1">>],[[<<"1">>]]}} ->
+                                          Time/1000;
+                                      X ->
+                                          %% io:format("error ~w~n",[X]),
+                                          60001
+                                  catch
+                                      C:E ->
+                                          %% io:format("error ~w~n",[{C,E}]),
+                                          60002
+                                  end,
+                          {true, {N, N2, Delay, Worker, State}}
+                  end;
              (_) ->
                   false
           end, ets:tab2list(WorkerName))
@@ -49,6 +55,3 @@ lists:foreach(
           false
   end, DelayInfos2),
 ok.
-
-
-
