@@ -17,12 +17,15 @@ release_handler:unpack_release("ejabberd_" ++ Vsn),
 {ok, _} = file:copy("/data/apps/opt/ejabberd/etc/nodetool",
                     filename:join(["/data/apps/opt/ejabberd/releases", Vsn, "nodetool"])),
 
-try  release_handler:install_release(Vsn) of
-     {ok, OldVsn1, []} ->
-        release_handler:make_permanent(Vsn),
-        "GOOD";
-     Else ->
-        Else
+try
+    release_handler:check_install_release(Vsn),
+  case release_handler:install_release(Vsn) of
+      {ok, OldVsn1, []} ->
+          release_handler:make_permanent(Vsn),
+          "GOOD";
+      Else ->
+          Else
+  end
 catch
     Class:Error -> {Class, Error}
 end.
