@@ -18,8 +18,6 @@ end,
 
 case IsEjabberd() of
     true ->
-        X0 = ejabberd_config:load_file("/data/apps/opt/ejabberd/etc/ejabberd/ejabberd.yml"),
-        io:format("reload parameter => ~p~n",[X0]),
         X1 = restart_module:restart_login(),
         io:format("restart_module:restart_login() => ~p~n",[X1]),
         X2 = extauth_rpc:stop(<<"easemob.com">>),
