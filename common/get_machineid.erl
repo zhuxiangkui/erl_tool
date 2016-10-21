@@ -1,11 +1,28 @@
+% input: enable | disable
+%
+% op: enable or disable bypass mode for ejabberd / msync
+%
+% e.g.: ./erl_expect -sname msync@sdb-ali-hangzhou-ejabberd5 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/bypass_mode.erl disable
+
 echo(off),
-MachineID = ejabberd_ticktick:machine_id(),
-Node = node(),
-[_, Num, _] = binary:split(erlang:list_to_binary(erlang:atom_to_list(Node)), [<<"beijing-">>, <<"-pri">>], [global]),
-MustNum = erlang:binary_to_integer(Num),
-case MustNum + 100 == MachineID of
-true  ->
-ignore;
+
+IsEjabberd =
+fun() ->
+        case lists:keysearch(ejabberd, 1, application:which_applications()) of
+            {Value, _} ->
+                true;
+            _ ->
+                false
+        end
+end,
+
+MachineID = case IsEjabberd() of
+    true ->
+        ejabberd_ticktick:machine_id();
     false ->
-io:format("MachineID:~p ~n", [MachineID])
-end.
+        application:get_env(ticktick, machine_id, 0)
+end,
+
+io:format("machine id: ~p~n", [MachineID]),
+
+ok.
