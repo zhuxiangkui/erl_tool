@@ -1,15 +1,14 @@
-%% input: JID
+%% input: GroupJID
 %%
-%% op: load all messages sent/received for the JID
+%% op: load all messages sent/received for the GroupJID
 %%
-%% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' ejabberd/message_history.erl JID
+%% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' msync/message_history.erl GroupJID
 
-echo(off),
+echo(on),
 [User0] = Args,
 LUser = list_to_binary(User0),
-LServer = <<"easemob.com">>,
 
-Username = jlib:jid_to_string(jlib:make_jid(ejabberd_odbc:escape(LUser), LServer, <<"mobile">>)),
+Username = <<LUser/binary, "@conference.easemob.com">>,
 MessageIndexList =
 case catch easemob_odbc:sql_shard_query(<<"odbc_shards">>,  Username,
                                          [<<"select mid, timestamp, type, opposite from message_index_">>,
