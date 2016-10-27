@@ -36,8 +36,8 @@ case Args of
     ["get_state"] ->
         lager_event_watcher:get_state();
     [Key, Value] when Key == "threshold";
-                      Key == "interval"
-                      Key == "max_over_cnt" 
+                      Key == "interval";
+                      Key == "max_over_cnt";
                       Key == "reboot_after" ->
         try list_to_integer(Value) of
             N ->
