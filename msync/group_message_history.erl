@@ -4,7 +4,7 @@
 %%
 %% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' msync/message_history.erl GroupJID
 
-echo(on),
+echo(off),
 [User0] = Args,
 LUser = list_to_binary(User0),
 
