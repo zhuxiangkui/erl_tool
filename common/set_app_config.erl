@@ -36,6 +36,7 @@ fun
 (separate_worker, all) -> all; %% 设置worker node
 (check_nickname, V) when is_boolean(V) -> V; %% : true -> check dl_userid and dl_nickname
 (enable_msg_ext_decode, V) when is_boolean(V) -> V;
+(unique_client_msgid, V) when is_boolean(V) -> V;
 (Key, Value) ->
     io:format("error: invalid config name or value  ~s=~s~n",[Key, Value]),
     exit(normal)
