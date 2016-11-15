@@ -1,11 +1,16 @@
 echo(on),
-[Vsn] = Args,
+case Args of
+    [Vsn, DefaultPath] ->
+        ok;
+    [Vsn] ->
+        DefaultPath = "/data/apps/opt"
+end,
 
-{ok, _} = file:copy("/data/apps/opt/ejabberd/etc/ejabberd/" ++ Vsn ++ "/ejabberd.yml",
-                    filename:join(["/data/apps/opt/ejabberd/etc/ejabberd", "ejabberd.yml"])),
+{ok, _} = file:copy(DefaultPath ++ "/ejabberd/etc/ejabberd/" ++ Vsn ++ "/ejabberd.yml",
+                    filename:join([DefaultPath ++ "/ejabberd/etc/ejabberd", "ejabberd.yml"])),
 
-{ok, _} = file:copy("/data/apps/opt/ejabberd/etc/ejabberd/" ++ Vsn ++ "/message_store.config",
-                    filename:join(["/data/apps/opt/ejabberd/etc/ejabberd", "message_store.config"])),
+{ok, _} = file:copy(DefaultPath ++ "/ejabberd/etc/ejabberd/" ++ Vsn ++ "/message_store.config",
+                    filename:join([DefaultPath ++ "/ejabberd/etc/ejabberd", "message_store.config"])),
 try
     release_handler:check_install_release(Vsn),
   case release_handler:install_release(Vsn) of
