@@ -32,7 +32,12 @@ fun(N) ->
                                   end,
                           {true, {N, N2, Delay, Worker, State}}
                   end;
-             (_) ->
+             ({pool_size, _}) ->
+                  false;
+             ({seq, _}) ->
+                  false;
+             (Error) ->
+                  io:format("error odbc conn not exist ~s ~p ~n", [node(), Error]),
                   false
           end, ets:tab2list(WorkerName))
 end,
