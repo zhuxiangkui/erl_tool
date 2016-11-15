@@ -37,8 +37,18 @@ fun({N2, Worker})
         io:format("error odbc conn not exist ~s ~n", [node()]),
         false
 end,
+WorkerList =
+fun() ->
+        case catch ets:tab2list(odbc) of
+            {'EXIT', _} ->
+                io:format("error odbc conn not exist ~s ~n", [node()]),
+                [];
+            List ->
+                List
+        end
+end,
 
-DelayInfos = lists:filtermap(GetDelayInfo, ets:tab2list(odbc)),
+DelayInfos = lists:filtermap(GetDelayInfo, WorkerList()),
 
 LargeDelays = lists:filter(
                 fun({N2, Delay, Pid, {_, State}}) when Delay > 1000 ->
@@ -49,7 +59,7 @@ LargeDelays = lists:filter(
                         false
                 end, DelayInfos),
 timer:sleep(2000),
-DelayInfos2 = lists:filtermap(GetDelayInfo, ets:tab2list(odbc)),
+DelayInfos2 = lists:filtermap(GetDelayInfo, WorkerList()),
 lists:foreach(
   fun({N2, Delay, Pid, {_, State}}) ->
           io:format("odbc conn ~s ~p ~p ~s ~p ~p~n", [node(), N2, Delay, lists:nth(1,element(4,State)), lists:nth(2,element(4,State)) , Pid]),

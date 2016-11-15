@@ -1,5 +1,14 @@
 echo(off),
-
+WorkerList =
+fun(WorkName) ->
+        case catch ets:tab2list(WorkName) of
+            {'EXIT', _} ->
+                io:format("error odbc conn not exist ~s ~n", [node()]),
+                [];
+            List ->
+                List
+        end
+end,
 GetDelayInfo =
 fun(N) ->
         WorkerName = list_to_atom("odbc_shards_" ++ integer_to_list(N)),
@@ -39,7 +48,7 @@ fun(N) ->
              (Error) ->
                   io:format("error odbc conn not exist ~s ~p ~n", [node(), Error]),
                   false
-          end, ets:tab2list(WorkerName))
+          end, WorkerList(WorkerName))
 end,
 DelayInfos = lists:flatmap(GetDelayInfo, lists:seq(0,31)),
 LargeDelays = lists:filter(
