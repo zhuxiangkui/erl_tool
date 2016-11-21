@@ -38,6 +38,7 @@ fun
 (check_nickname, V) when is_boolean(V) -> V; %% : true -> check dl_userid and dl_nickname
 (enable_msg_ext_decode, V) when is_boolean(V) -> V;
 (unique_client_msgid, V) when is_boolean(V) -> V;
+(use_thrift_group, V) when is_boolean(V) -> V; %% group refactor: use thrift call to REST
 (Key, Value) ->
     io:format("error: invalid config name or value  ~s=~s~n",[Key, Value]),
     exit(normal)
