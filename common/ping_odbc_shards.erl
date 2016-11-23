@@ -9,6 +9,15 @@ fun(WorkName) ->
                 List
         end
 end,
+GetShardConfig =
+fun(Num) ->
+        {ok, Config} = application:get_env(message_store, odbc_shards),
+        ConfigValue = proplists:get_value(Num, Config),
+        Server = proplists:get_value(server, ConfigValue),
+        Port = proplists:get_value(port, ConfigValue, 3306),
+        {Server, Port}
+end,
+
 GetDelayInfo =
 fun(N) ->
         WorkerName = list_to_atom("odbc_shards_" ++ integer_to_list(N)),
@@ -18,7 +27,8 @@ fun(N) ->
                 when is_pid(Worker)->
                   case catch sys:get_state(Worker) of
                       {'EXIT', _} ->
-                          io:format("restart delayed odbc conn ~s ~p ~p ~p ~n", [node(), N , N2,  Worker ]),
+                          {Server, Port} = GetShardConfig(N),
+                          io:format("restart delayed odbc conn ~s ~p ~p ~p ~s ~p ~p~n", [node(), N , N2, 60001, Server, Port, Worker ]),
                           exit(Worker, kill),
                           false;
                       State ->
