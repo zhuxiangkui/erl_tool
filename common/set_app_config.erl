@@ -8,6 +8,7 @@ echo(off),
 
 Check =
 fun
+(use_thrift_group, V) when is_boolean(V) -> V; %% : false use java group through thrift
 (use_multi_devices, V) when is_boolean(V) -> V; %% : true multi devices
 (apns_mute, V) when is_boolean(V) -> V; %% : true apns num
 (use_roster, V) when is_boolean(V) -> V; %% : true 好友
