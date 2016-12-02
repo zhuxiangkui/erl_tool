@@ -25,7 +25,7 @@ file:copy(DefaultPath ++ "/ejabberd/etc/ejabberd/" ++ Vsn ++ "/sys.config",
                     filename:join([DefaultPath ++ "/ejabberd/releases", Vsn, "nodetool"])),
 
 try
-    release_handler:check_install_release(Vsn),
+    release_handler:check_install_release(Vsn, [purge]),
   case release_handler:install_release(Vsn, [{suspend_timeout, infinity}, {code_change_timeout, infinity}]) of
       {ok, OldVsn1, []} ->
           release_handler:make_permanent(Vsn),
