@@ -6,4 +6,6 @@
 echo(off),
 ejabberd_app:stop_thrift_service(),
 ejabberd_app:start_thrift_service(),
+io:format("user service thrift: ~p ~n", [whereis('user_service_thrift')]),
+io:format("group service thrift: ~p ~n", [whereis('groupService_thrift')]),
 ok.
