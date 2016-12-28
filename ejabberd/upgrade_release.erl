@@ -1,4 +1,12 @@
-echo(on),
+
+%% input: Vsn
+%%
+%% op: upgrade to release version Vsn
+%%
+%% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' ejabberd/upgrade_release.erl Vsn
+
+
+echo(off),
 case Args of
     [Vsn, DefaultPath] ->
         ok;
@@ -24,8 +32,9 @@ file:copy(DefaultPath ++ "/ejabberd/etc/ejabberd/" ++ Vsn ++ "/sys.config",
 {ok, _} = file:copy(DefaultPath ++ "/ejabberd/etc/nodetool",
                     filename:join([DefaultPath ++ "/ejabberd/releases", Vsn, "nodetool"])),
 
+io:format("start to install release~n"),
 try
-    release_handler:check_install_release(Vsn, [purge]),
+  %release_handler:check_install_release(Vsn, [purge]),
   case release_handler:install_release(Vsn, [{suspend_timeout, infinity}, {code_change_timeout, infinity}]) of
       {ok, OldVsn1, []} ->
           io:format("install release success~n"),
