@@ -5,8 +5,10 @@ try  release_handler:install_release(Vsn) of
         release_handler:make_permanent(Vsn),
         "GOOD";
      Else ->
-        Else
+        io:format("there are something error happened:~p ~n", [Else]),
+        exit(-1)
 catch
-    Class:Error -> {Class, Error}
+    Class:Error ->
+        io:format("there are something error happened:~p ~n", [{Class, Error}]),
+        exit(-1)
 end.
-%% ok = release_handler:make_permanent(Vsn).

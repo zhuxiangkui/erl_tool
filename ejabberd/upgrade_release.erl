@@ -16,7 +16,7 @@ end,
 release_handler:unpack_release("ejabberd_" ++ Vsn),
 {ok, _} = file:copy(DefaultPath ++ "/ejabberd/etc/ejabberd/ejabberdctl.cfg",
                     filename:join([DefaultPath ++ "/ejabberd/releases", Vsn, "ejabberdctl.cfg"])),
-file:copy(DefaultPath ++ "/ejabberd/etc/ejabberd/" ++ Vsn ++ "/sys.config",
+{ok, _} = file:copy(DefaultPath ++ "/ejabberd/etc/ejabberd/" ++ Vsn ++ "/sys.config",
                     filename:join([DefaultPath ++ "/ejabberd/releases", Vsn, "sys.config"])),
 {Ok, _} = file:copy(DefaultPath ++ "/ejabberd/etc/ejabberd/inetrc",
                     filename:join([DefaultPath ++ "/ejabberd/releases", Vsn, "inetrc"])),
@@ -33,9 +33,11 @@ try
           release_handler:make_permanent(Vsn),
           "GOOD";
       Else ->
-          Else
+          io:format("there are something error happened:~p ~n", [Else]),
+          exit(-1)
   end
 catch
-    Class:Error -> {Class, Error}
+    Class:Error ->
+        io:format("there are something error happened:~p ~n", [{Class, Error}]),
+        exit(-1)
 end.
-%% ok = release_handler:make_permanent(Vsn).

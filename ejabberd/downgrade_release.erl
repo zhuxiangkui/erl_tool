@@ -6,11 +6,6 @@ case Args of
         DefaultPath = "/data/apps/opt"
 end,
 
-{ok, _} = file:copy(DefaultPath ++ "/ejabberd/etc/ejabberd/" ++ Vsn ++ "/ejabberd.yml",
-                    filename:join([DefaultPath ++ "/ejabberd/etc/ejabberd", "ejabberd.yml"])),
-
-{ok, _} = file:copy(DefaultPath ++ "/ejabberd/etc/ejabberd/" ++ Vsn ++ "/message_store.config",
-                    filename:join([DefaultPath ++ "/ejabberd/etc/ejabberd", "message_store.config"])),
 try
     release_handler:check_install_release(Vsn),
   case release_handler:install_release(Vsn) of
@@ -18,8 +13,11 @@ try
           release_handler:make_permanent(Vsn),
           "GOOD";
       Else ->
-          Else
+          io:format("there are something error happened:~p ~n", [Else]),
+          exit(-1)
   end
 catch
-    Class:Error -> {Class, Error}
+    Class:Error ->
+        io:format("there are something error happened:~p ~n", [{Class, Error}]),
+        exit(-1)
 end.
