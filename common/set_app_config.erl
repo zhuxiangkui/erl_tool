@@ -39,6 +39,9 @@ fun
 (enable_msg_ext_decode, V) when is_boolean(V) -> V;
 (unique_client_msgid, V) when is_boolean(V) -> V;
 (use_thrift_group, V) when is_boolean(V) -> V; %% group refactor: use thrift call to REST
+(large_group, V) when is_boolean(V) -> V;
+(read_group_cursor, V) when is_boolean(V) -> V;
+(read_group_index, V) when is_boolean(V) -> V;    
 (Key, Value) ->
     io:format("error: invalid config name or value  ~s=~s~n",[Key, Value]),
     exit(normal)
