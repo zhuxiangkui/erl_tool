@@ -43,6 +43,7 @@ fun
 (read_group_cursor, V) when is_boolean(V) -> V;
 (read_group_index, V) when is_boolean(V) -> V;
 (is_push_index_cursor, V) when is_boolean(V) -> V;
+(write_default_res, V) when is_boolean(V) -> V;
 (Key, Value) ->
     io:format("error: invalid config name or value  ~s=~s~n",[Key, Value]),
     exit(normal)
