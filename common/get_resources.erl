@@ -6,4 +6,4 @@
 echo(off),
 [EID] = Args,
 Resources = easemob_resource:get_resources(list_to_binary(EID)),
-io:format("~p's Resources:~p ~n ", [Resources]).
+io:format("~p's Resources:~p ~n ", [EID, Resources]).
