@@ -7,10 +7,12 @@ release_handler:unpack_release("msync_" ++ Vsn),
 {ok, _} = file:copy("/data/apps/opt/msync/etc/nodetool",
                     filename:join(["/data/apps/opt/msync/releases", Vsn, "nodetool"])),
 
-try  release_handler:install_release(Vsn) of
+io:format("start to install release~n"),
+try  release_handler:install_release(Vsn, [{suspend_timeout, infinity}, {code_change_timeout, infinity}]) of
      {ok, OldVsn1, []} ->
-        release_handler:make_permanent(Vsn),
-        "GOOD";
+         release_handler:make_permanent(Vsn),
+         io:format("install release success~n"),
+         "GOOD";
      Else ->
         io:format("there are something error happened:~p ~n", [Else]),
         exit(-1)
