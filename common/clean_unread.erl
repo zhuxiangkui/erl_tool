@@ -99,30 +99,6 @@ Get_mids =
         end
     end,
 
-Do_Delete_overtime_mid =
-    fun(_Jid, _Cid, Mid, "dry_run") ->
-        io:format("[deleted]Mid: ~p~n", [Mid]);
-    (Jid, Cid, Mid, "delete") ->
-        message_store:delete_message(Jid, Cid, Mid);
-    (_Jid, _Cid, _Mid, RunMode) ->
-        io:format("[Do_Delete_overtime_mid]wrong RunMode: ~p~n", [RunMode])
-    end,
-
-Delete_overtime_mid =
-    fun(Jid, Cid, RunMode) ->
-        %io:format("Jid: ~p, Cid: ~p~n", [Jid, Cid]),
-        IndexUnreadKey = easemob_offline_index:get_index_key(Jid, Cid),
-        MidList = Get_mids(IndexUnreadKey),
-        lists:foreach(fun(Mid) ->
-            case Is_mid_overtime(Mid, os:timestamp()) of
-                true ->
-                    Do_Delete_overtime_mid(Jid, Cid, Mid, RunMode);
-                false ->
-                    ignore
-            end
-        end, MidList)
-    end,
-
 Exec_redis_hdel =
     fun(Key, Field) ->
         W = cuesport:get_worker(index),
@@ -165,19 +141,6 @@ Exec_redis_del =
         end
     end,
 
-Handle_apns_key =
-    fun(ApnsKey, RunMode) ->
-        case RunMode of
-            "dry_run" ->
-                io:format("[deleted]ApnsKey: ~p~n", [ApnsKey]);
-            "delete" ->
-                io:format("[deleted]ApnsKey: ~p~n", [ApnsKey]),
-                Exec_redis_del(ApnsKey);
-            _ ->
-                io:format("[Handle_apns_key]wrong RunMode: ~p~n", [RunMode])
-        end
-    end,
-
 Delete_zero_cid_and_index =
     fun(<<"unread:", Jid/binary>> = UnreadKey, Cid, "dry_run") ->
         io:format("[deleted]UnreadKey: ~p, Cid: ~p~n", [UnreadKey, Cid]),
@@ -189,6 +152,48 @@ Delete_zero_cid_and_index =
         Exec_redis_del(easemob_offline_index:get_index_key(Jid, Cid));
     (_UnreadKey, _CID, RunMode) ->
         io:format("[Delete_zero_cid_and_index]wrong RunMode: ~p~n", [RunMode])
+    end,
+
+Do_Delete_overtime_mid =
+    fun(_Jid, _Cid, Mid, "dry_run") ->
+        io:format("[deleted]Mid: ~p~n", [Mid]);
+    (Jid, Cid, Mid, "delete") ->
+        message_store:delete_message(Jid, Cid, Mid);
+    (_Jid, _Cid, _Mid, RunMode) ->
+        io:format("[Do_Delete_overtime_mid]wrong RunMode: ~p~n", [RunMode])
+    end,
+
+Delete_overtime_mid =
+    fun(<<"unread:", Jid/binary>> = UnreadKey, Cid, RunMode) ->
+        %io:format("Jid: ~p, Cid: ~p~n", [Jid, Cid]),
+        IndexUnreadKey = easemob_offline_index:get_index_key(Jid, Cid),
+        MidList = Get_mids(IndexUnreadKey),
+        case MidList of
+            [] ->
+                Delete_zero_cid_and_index(UnreadKey, Cid, RunMode);
+            _ ->
+                lists:foreach(fun(Mid) ->
+                    case Is_mid_overtime(Mid, os:timestamp()) of
+                        true ->
+                            Do_Delete_overtime_mid(Jid, Cid, Mid, RunMode);
+                        false ->
+                            ignore
+                    end
+                end, MidList)
+        end
+    end,
+
+Handle_apns_key =
+    fun(ApnsKey, RunMode) ->
+        case RunMode of
+            "dry_run" ->
+                io:format("[deleted]ApnsKey: ~p~n", [ApnsKey]);
+            "delete" ->
+                io:format("[deleted]ApnsKey: ~p~n", [ApnsKey]),
+                Exec_redis_del(ApnsKey);
+            _ ->
+                io:format("[Handle_apns_key]wrong RunMode: ~p~n", [RunMode])
+        end
     end,
 
 Handle_cidpair_list =
@@ -205,10 +210,10 @@ Handle_cidpair_list =
     Loop(<<"unread:", Jid/binary>> = UnreadKey, [Cid, NumberBinary | CidPairList], RunMode) ->
         case erlang:binary_to_integer(NumberBinary) =< 0 of
             true ->
-                Delete_zero_cid_and_index(UnreadKey, Cid, RunMode);
+                ignore;
             false ->
                 %io:format("UnreadKey: ~p, Cid: ~p~n", [UnreadKey, Cid]),
-                Delete_overtime_mid(Jid, Cid, RunMode)
+                Delete_overtime_mid(UnreadKey, Cid, RunMode)
         end,
         Loop(UnreadKey, CidPairList, RunMode)
     end,
