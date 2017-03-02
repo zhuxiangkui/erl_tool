@@ -9,5 +9,5 @@
 
 
 echo(off),
-session_repair:delete_bad_sessions("/data/apps/opt/ejabberd/users-session.data",true,0),
+session_repair:delete_bad_sessions("/data/apps/opt/ejabberd/users-session.data",true,1),
 ok.
