@@ -1,5 +1,5 @@
 
-% input: AppKey
+% input :GroupOrChatroom
 %
 % op: do not queue group or chatroom message into kafka
 %
