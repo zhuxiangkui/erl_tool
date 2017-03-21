@@ -1,3 +1,11 @@
+
+%%%
+% feature: enable etcd configure management feature on msync
+% params :
+% example: ./erl_expect -sname msync@ebs-ali-beijing-88 -setcookie secret msync/msync_enable_etcd_config.erl
+%%%
+
+
 echo(off),
 EtcdClient =
     {msync_etcd_client,
