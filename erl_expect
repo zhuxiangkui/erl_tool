@@ -97,13 +97,11 @@ process_args(["-setcookie", Cookie | Rest], Acc, TargetNode) ->
     erlang:set_cookie(node(), list_to_atom(Cookie)),
     process_args(Rest, Acc, TargetNode);
 process_args(["-name", TargetName | Rest], Acc, _) ->
-    ThisNode = append_node_suffix(TargetName, "_maint_"),
-    {ok, _} = net_kernel:start([ThisNode, longnames]),
+    start_one_local_node(TargetName, longnames),
     set_default_cookie(),
     process_args(Rest, Acc, nodename(TargetName));
 process_args(["-sname", TargetName | Rest], Acc, _) ->
-    ThisNode = append_node_suffix(TargetName, "_maint_"),
-    {ok, _} = net_kernel:start([ThisNode, shortnames]),
+    start_one_local_node(TargetName, shortnames),
     set_default_cookie(),
     process_args(Rest, Acc, nodename(TargetName));
 process_args(["-echo" | Rest], Acc, TargetNode) ->
@@ -115,6 +113,17 @@ process_args(["-noecho" | Rest], Acc, TargetNode) ->
 process_args([Arg | Rest], Acc, Opts) ->
     process_args(Rest, [Arg | Acc], Opts).
 
+start_one_local_node(TargetName, Flag) ->
+    start_one_local_node(TargetName, Flag, 0).
+
+start_one_local_node(TargetName, Flag, N) ->
+    ThisNode = append_node_suffix(TargetName, "_maint_" ++ integer_to_list(N)),
+    case net_kernel:start([ThisNode, Flag]) of
+        {ok, _} ->
+            ok;
+        {error, _} ->
+            start_one_local_node(TargetName, Flag, N + 1)
+    end.
 
 start_epmd() ->
     [] = os:cmd(epmd_path() ++ " -daemon"),
@@ -149,9 +158,9 @@ nodename(Name) ->
 append_node_suffix(Name, Suffix) ->
     case string:tokens(Name, "@") of
         [Node, Host] ->
-            list_to_atom(lists:concat([Node, Suffix, os:getpid(), "@", Host]));
+            list_to_atom(lists:concat([Node, Suffix, "@", Host]));
         [Node] ->
-            list_to_atom(lists:concat([Node, Suffix, os:getpid()]))
+            list_to_atom(lists:concat([Node, Suffix]))
     end.
 
 
