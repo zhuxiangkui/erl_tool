@@ -158,9 +158,9 @@ nodename(Name) ->
 append_node_suffix(Name, Suffix) ->
     case string:tokens(Name, "@") of
         [Node, Host] ->
-            list_to_atom(lists:concat([Node, Suffix, "@", Host]));
+            list_to_atom(lists:concat([Node, Suffix, os:getpid(), "@", Host]));
         [Node] ->
-            list_to_atom(lists:concat([Node, Suffix]))
+            list_to_atom(lists:concat([Node, Suffix, os:getpid()]))
     end.
 
 
