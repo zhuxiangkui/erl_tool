@@ -7,14 +7,18 @@ case Args of
 end,
 
 io:format("Args: ~p~n", [Args]),
+[{_,OldVsn,_,_}]=release_handler:which_releases(permanent),
+io:format("~p ~n",[OldVsn]),
 try
   case release_handler:install_release(Vsn, [{suspend_timeout, infinity}, {code_change_timeout, infinity}]) of
-      {ok, OldVsn1, []} ->
+      {ok, OtherVsn, []} ->
           release_handler:make_permanent(Vsn),
-          io:format("make permanent success"),
-          release_handler:remove_release(OldVsn1),
-          io:format("remove release success"),
-          "GOOD";
+          io:format("make permanent success ~n"),
+          case release_handler:remove_release(OldVsn) of
+              ok -> io:format("remove release success ~n"),
+       	            "GOOD";
+ 	      {error,Reason} -> io:format("remove_release failed because ~p~n",[Reason])
+          end;	
       Else ->
           io:format("there are something error happened:~p ~n", [Else]),
           exit(-1)
