@@ -1,0 +1,82 @@
+#!/usr/bin/env escript
+%% -*- erlang -*-
+%%! -smp enable -mnesia debug verbose
+%%
+%% input : User1,Password1,Server1, Port1, User2, Password2, Server2, Port2
+%% args_explain : 
+%% [User1,Password1,Server1, Port1] is for xmpp
+%% [User2, Password2, Server2, Port2] is for msync
+%%
+main([User1,Password1,Server1, Port1, User2, Password2, Server2, Port2]) ->
+    setup_path(),
+    application:ensure_all_started(lager),
+    user_default:start(),
+    application:set_env(im_client, ui, ui_gchat_delay_measurement),
+    process_flag(trap_exit, true),
+
+    random:seed(erlang:phash2([node()]),
+                erlang:monotonic_time(),
+                erlang:unique_integer()),
+    MagicString = magic_string(),
+    application:set_env(im_client, gchat_text, MagicString),
+
+    try
+        Client1 = start_client(User1, Password1, Server1, Port1, xmpp),
+        Client2 = start_client(User2, Password2, Server2, Port2, msync),
+        io:format("start sleeping for 5 seconds~n",[]),
+        timer:sleep(5000), %% sleep waiting for login
+        io:format("start sending message~n",[]),
+        im_client:chat(Client1, User2, MagicString),
+        timer:sleep(1000),
+        im_client:stop(Client1),
+        wait_for_terminate([Client1, Client2], 170)
+    catch
+        Class:Error ->
+            usage(Class,Error)
+    end;
+main(X) ->
+    usage(1,X).
+
+
+start_client(User, Password, Server, Port, Type) ->
+    user_default:config(Type, host, Server),
+    user_default:config(Type, port, list_to_integer(Port)),
+    {ok, Client} = im_client:start_link(Type, #{user => User, password => Password }),
+    {LoginTime, _} = timer:tc(fun() ->
+                                      im_client:login(Client),
+                                      X = im_client:get_unread(Client),
+                                      io:format("unread list: ~p ~n", [X]),
+                                      im_client:sync_unread(Client)
+                              end),
+    io:format("~s login, ~p ms~n", [ User, LoginTime/1000]),
+    Client.
+
+
+wait_for_terminate([],_) ->
+    ok;
+wait_for_terminate(Clients, 180) ->
+    io:format("timeout after waiting for 3min: ~p~n", [Clients]),
+    halt(1);
+wait_for_terminate(Clients, N) ->
+    io:format("waiting for ~p~n", [Clients]),
+    timer:sleep(1000),
+    wait_for_terminate([Client || Client <- Clients, erlang:is_process_alive(Client)], N +1).
+
+usage(Class,Error) ->
+    io:format("error ~p:~p ~p~n", [Class, Error, erlang:get_stacktrace()]),
+    halt(1).
+
+setup_path() ->
+    ScriptName = escript:script_name(),
+    ScriptDir = filename:dirname(ScriptName),
+    ProjectRoot = filename:join([ScriptDir, "..", "..", ".."]),
+    Dirs = filelib:wildcard(filename:join([ProjectRoot, "apps", "*", "ebin"]))
+        ++ filelib:wildcard(filename:join([ProjectRoot, "deps", "*", "ebin"]))
+        ++ [ScriptDir],
+    lists:foreach(fun code:add_path/1, Dirs).
+
+
+magic_string() ->
+    {{Year, Month, Day}, {Hour, Minute, Second}} = calendar:now_to_local_time(erlang:timestamp()),
+    StrTime = lists:flatten(io_lib:format("~4..0w-~2..0w-~2..0wT~2..0w:~2..0w:~2..0w",[Year,Month,Day,Hour,Minute,Second])),
+    StrTime ++ " delay test".
