@@ -89,13 +89,13 @@ Get_mids =
                     List;
                 Error ->
                     io:format("lrange IndexUnreadKey: ~p error: ~p~n", [IndexUnreadKey, Error]),
-                    []
+                    error
             end
         catch
             Class:Exception ->
                 io:format("lrange IndexUnreadKey: ~p: Class:~p Exception:~p StackTrace:~p~n",
                             [IndexUnreadKey, Class, Exception, erlang:get_stacktrace()]),
-                []
+                error
         end
     end,
 
@@ -171,6 +171,8 @@ Delete_overtime_mid =
         case MidList of
             [] ->
                 Delete_zero_cid_and_index(UnreadKey, Cid, RunMode);
+            error ->
+                ignore;
             _ ->
                 lists:foreach(fun(Mid) ->
                     case Is_mid_overtime(Mid, os:timestamp()) of
