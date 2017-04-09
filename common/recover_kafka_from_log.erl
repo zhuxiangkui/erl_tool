@@ -111,38 +111,38 @@ FindTopic = fun(Plist) ->
 SendToKafka = fun(Topic, Value) ->
                       case catch ekaf:produce_sync(Topic, Value ) of
                           {{sent,_,_}, Res} ->
-                              INFO("RepairKafka: Produce ok: ~p on message ~ts ~n", [Topic, Value]),
+                              INFO("RepairKafka: Produce ok: ~p on message ~s ~n", [Topic, Value]),
                               ok;
                           ok ->
-                              INFO("RepairKafka: Produce ok: ~p on message ~ts ~n", [Topic, Value]),
+                              INFO("RepairKafka: Produce ok: ~p on message ~s ~n", [Topic, Value]),
                               ok;
                           Error ->
-                              INFO("RepairKafka: ProduceError: ~p on message ~ts ~n", [Error, Value]),
-                              {error, Error}
+                              INFO("RepairKafka: ProduceError: ~p on message ~s ~n", [Error, Value]),
+                              {fail, Error}
                       end
               end,
 HandleMsg = fun(Str) ->
                     try
-                        INFO("HandleMsg:~ts~n",[Str]),
+                        INFO("HandleMsg:~s~n",[Str]),
                         Plist = jsx:decode(Str),
                         case FindTopic(Plist) of
                             undefined -> 
                                 INFO("RepairKafka: Cannot Find Topic:plist=~p~n", [Plist]),
-                                skip;
+                                {fail, skip};
                             TopicName ->
                                 case IsWriteKafka of
                                     true ->
                                         SendToKafka(TopicName, Str);
                                     false ->
-                                        INFO("RepairKafka: SkipWriteKafka:Topic=~p,Str=~ts~n", [TopicName, Str]),
+                                        INFO("RepairKafka: SkipWriteKafka:Topic=~p,Str=~s~n", [TopicName, Str]),
                                         ok
                                 end
                         end
                     catch
                         E:R ->
-                            INFO("RepairKafka: HandleMsgError: E:~p,E:~p,T:~p~n", [E,R,erlang:get_stacktrace()])
-                    end,
-                    ok
+                            INFO("RepairKafka: HandleMsgError: E:~p,E:~p,T:~p~n", [E,R,erlang:get_stacktrace()]),
+							{fail, exit}
+                    end
             end,
 HandleLine = fun(Data) ->
                      case IsProduceError(Data) andalso (not IsProduceTimeout(Data)) of
