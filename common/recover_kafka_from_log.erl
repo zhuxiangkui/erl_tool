@@ -1,11 +1,11 @@
 
-% input: none
-%
-% op: recover ekaf
-%
-                                                % e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/recover_kafka_from_log.erl "/data/apps/opt/ejabberd/var/log/ejabberd.log.0" 
+%% input: none
+%%
+%% op: recover ekaf
+%%
+%% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/recover_kafka_from_log.erl "/data/apps/opt/ejabberd/var/log/ejabberd.log.0" 
 
-echo(on),
+echo(off),
 case Args of
 	[LogFile] ->
 		IsWriteKafka = true;
@@ -16,8 +16,10 @@ case Args of
 end,
 
 INFO = fun(Format, Args) ->
-               error_logger:info_msg(Format, Args),
-               io:format(Format, Args)
+               error_logger:info_msg(Format, Args)
+       end,
+ERROR_MSG = fun(Format, Args) ->
+               error_logger:error_msg(Format, Args)
        end,
 StrToTerm = fun(Str) ->
                     case erl_scan:string(Str++".") of
@@ -70,6 +72,7 @@ ParseMessage2 = fun(Data) ->
                         end
                 end,
 {ok, LogKafkaConfig} = application:get_env(message_store, log_kafka),
+INFO("Config:~p~n", [LogKafkaConfig]),
 OutgoingMsgTopic = proplists:get_value(kafka_outgoing_msg_topic, LogKafkaConfig, <<"ejabberd-chat-messages">>),
 IncomingMsgTopic = proplists:get_value(kafka_incoming_msg_topic, LogKafkaConfig, <<"ejabberd-chat-recvmsgs">>),
 OfflineMsgTopic = proplists:get_value(kafka_offline_msg_topic, LogKafkaConfig, <<"ejabberd-chat-offlines">>),
@@ -117,7 +120,7 @@ SendToKafka = fun(Topic, Value) ->
                               INFO("RepairKafka: Produce ok: ~p on message ~s ~n", [Topic, Value]),
                               ok;
                           Error ->
-                              INFO("RepairKafka: ProduceError: ~p on message ~s ~n", [Error, Value]),
+                              ERROR_MSG("RepairKafka: ProduceError: ~p on message ~s ~n", [Error, Value]),
                               {fail, Error}
                       end
               end,
@@ -127,7 +130,7 @@ HandleMsg = fun(Str) ->
                         Plist = jsx:decode(Str),
                         case FindTopic(Plist) of
                             undefined -> 
-                                INFO("RepairKafka: Cannot Find Topic:plist=~p~n", [Plist]),
+                                ERROR_MSG("RepairKafka: Cannot Find Topic:plist=~p~n", [Plist]),
                                 {fail, skip};
                             TopicName ->
                                 case IsWriteKafka of
@@ -140,7 +143,7 @@ HandleMsg = fun(Str) ->
                         end
                     catch
                         E:R ->
-                            INFO("RepairKafka: HandleMsgError: E:~p,E:~p,T:~p~n", [E,R,erlang:get_stacktrace()]),
+                            ERROR_MSG("RepairKafka: HandleMsgError: E:~p,E:~p,Str:~ts~n,T:~p~n", [E,R,Str,erlang:get_stacktrace()]),
 							{fail, exit}
                     end
             end,
@@ -162,26 +165,32 @@ HandleLine = fun(Data) ->
                              end
                      end
              end,
-{ok,Fd} = file:open(LogFile, [read]),
-Loop = fun TLoop() ->
-               case file:read_line(Fd) of
-                   {ok, Data} ->
-                       case HandleLine(Data) of
-                           {fail, skip} ->
-                               skip;
-                           {fail, Reason} ->
-                               INFO("HandleFail:reason:~p,Data:~p~n", [Reason, Data]);
-                           ok ->
-                               timer:sleep(1),
-                               ok
-                       end,
-                       TLoop();
-                   Other ->
-                       INFO("Other:~p~n", [Other])
-               end
-       end,
-Loop(),
-file:close(Fd),
-
-
+case whereis(recover_kafka_from_log) of
+    undefined ->
+        spawn(fun() ->
+                      register(recover_kafka_from_log, self()),
+                      {ok,Fd} = file:open(LogFile, [read]),
+                      Loop = fun TLoop() ->
+                                     case file:read_line(Fd) of
+                                         {ok, Data} ->
+                                             case HandleLine(Data) of
+                                                 {fail, skip} ->
+                                                     skip;
+                                                 {fail, Reason} ->
+                                                     ERROR_MSG("HandleFail:reason:~p,Data:~s~n", [Reason, Data]);
+                                                 ok ->
+                                                     ok
+                                             end,
+                                             TLoop();
+                                         Other ->
+                                             INFO("Other:~p~n", [Other])
+                                     end
+                             end,
+                      Loop(),
+                      file:close(Fd),
+                      INFO("RepairKafka: finished~n", [])
+              end);
+    _ ->
+        io:format("error:another_repair_is_running~n")
+end,
 ok.
