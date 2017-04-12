@@ -147,9 +147,9 @@ Delete_zero_cid_and_index =
         io:format("[deleted]index unread key: ~p~n", [easemob_offline_index:get_index_key(Jid, Cid)]);
     (<<"unread:", Jid/binary>> = UnreadKey, Cid, "delete") ->
         io:format("[deleted]UnreadKey: ~p, Cid: ~p~n", [UnreadKey, Cid]),
-        Exec_redis_hdel(UnreadKey, Cid),
-        io:format("[deleted]index unread key: ~p~n", [easemob_offline_index:get_index_key(Jid, Cid)]),
-        Exec_redis_del(easemob_offline_index:get_index_key(Jid, Cid));
+        %Exec_redis_hdel(UnreadKey, Cid),
+        %Exec_redis_del(easemob_offline_index:get_index_key(Jid, Cid)),
+        io:format("[deleted]index unread key: ~p~n", [easemob_offline_index:get_index_key(Jid, Cid)]);
     (_UnreadKey, _CID, RunMode) ->
         io:format("[Delete_zero_cid_and_index]wrong RunMode: ~p~n", [RunMode])
     end,
