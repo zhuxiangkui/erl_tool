@@ -1,8 +1,9 @@
-%%%
-%% Feature:
-%% paras:
-%% ex: ./erl_expect -sname ejabberd@ebs-ali-beijing-5-pri -setcookie secret $ERL_TOOL_PATH/set_thrift_group.erl true
-%%
+% input: true | false
+%
+% op: set enable_thrift_group of app config
+%
+% e.g.: ./erl_expect -sname ejabberd@ebs-ali-beijing-5-pri -setcookie secret $ERL_TOOL_PATH/set_thrift_group.erl true 
+
 echo(off),
 Bool =
 case Args of

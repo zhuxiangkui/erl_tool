@@ -1,9 +1,14 @@
-
 % input: none
 %
 % op: get session max / min / avg delay
 %
 % e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/session_delay.erl
+%		db_muc_delay_max:3.123
+%		db_muc_delay_min:3.123
+%		db_muc_delay_avg:3.123
+%		db_muc_delay_count:1
+%		db_all_delay_max:0.463
+%		...
 
 echo(off),
 

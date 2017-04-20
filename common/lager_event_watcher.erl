@@ -1,14 +1,14 @@
-%% input: none
-%%
-%% op: start/stop/get_state/set  lager_event_watcher (inside lager_sup)
-%%
-%% e.g. 
-%% start: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/lager_event_watcher.erl start
-%% stop ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/lager_event_watcher.erl stop
-%% get_state ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/lager_event_watcher.erl get_state
-%% set ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/lager_event_watcher.erl threshold|interval|max_over_cnt|reboot_after N
-%% e.g.
-%% ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/lager_event_watcher.erl threshold 1000
+% input: none
+%
+% op: start/stop/get_state/set  lager_event_watcher (inside lager_sup)
+%
+% e.g. 
+% start: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/lager_event_watcher.erl start
+% stop ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/lager_event_watcher.erl stop
+% get_state ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/lager_event_watcher.erl get_state
+% set ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/lager_event_watcher.erl threshold|interval|max_over_cnt|reboot_after N
+% e.g.
+% ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/lager_event_watcher.erl threshold 1000
 
 echo(off),
 

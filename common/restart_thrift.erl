@@ -4,7 +4,6 @@
 %
 % e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/restart_thrift.erl
 
-
 IsEjabberd =
 fun() ->
         case lists:keysearch(ejabberd, 1, application:which_applications()) of

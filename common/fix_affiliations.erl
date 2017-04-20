@@ -1,3 +1,9 @@
+% input: GID Mem1 Mem2 ...
+%
+% op: fix affiliation of group
+%
+% e.g.: ./erl_expect -sname ejabberd@ejabberd-worker -setcookie 'ejabberd'  common/fix_affiliation.erl easemob-demo#chatdemoui_1492069834887 easemob-demo#chatdemoui_na1 easemob-demo#chatdemoui_na2
+
 echo(off),
 BArgs = lists:map(fun(A) -> list_to_binary(A) end, Args),
 [GID | Members] = BArgs,

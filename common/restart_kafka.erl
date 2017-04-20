@@ -1,4 +1,3 @@
-
 % input: none
 %
 % op: restart ekaf

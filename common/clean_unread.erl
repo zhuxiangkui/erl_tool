@@ -1,16 +1,13 @@
-
-%% input: 
-%%   Host :: codis host / redis host
-%%   Port :: 
-%%   RedisOrCodis :: codis / redis
-%%   RunMode :: delete / dry_run
-%%
-%% op: clean expired resource
-%%
-%% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' 
-%%                                              common/clean_resource.erl sdb-ali-hangzhou-redis3 6379 redis delete
-%%
-
+% input: 
+%   Host :: codis host / redis host
+%   Port :: 
+%   RedisOrCodis :: codis / redis
+%   RunMode :: delete / dry_run
+%
+% op: clean expired resource
+%
+% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' 
+%                                              common/clean_resource.erl sdb-ali-hangzhou-redis3 6379 redis delete
 
 echo(off),
 

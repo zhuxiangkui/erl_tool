@@ -1,11 +1,9 @@
-
-%% input: resource key
-%%
-%% op: clean expired resource
-%%
-%% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' 
-%%                                                common/clean_resource.erl im:resource:xizi#xiziquan_2021292@easemob.com
-%%
+% input: resource key
+%
+% op: clean expired resource
+%
+% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/clean_resource.erl im:resource:xizi#xiziquan_2021292@easemob.com
+%                                                
 
 [Eid0] = [Args],
 Eid = case list_to_binary(Eid0) of

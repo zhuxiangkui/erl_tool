@@ -1,3 +1,9 @@
+% input: none
+%
+% op: look up info of processes 
+%
+% e.g.: ./erl_expect -sname ejabberd@ejabberd-worker -setcookie 'ejabberd'  common/print_recon_proc_count_memory.erl
+
 echo(off),
 io:format("========================================~n"),
 io:format("time : ~p~n", [erlang:localtime()]),

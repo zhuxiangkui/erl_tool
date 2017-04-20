@@ -1,9 +1,8 @@
-
-%% input: none
-%%
-%% op: recover ekaf
-%%
-%% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/recover_kafka_from_log.erl "/data/apps/opt/ejabberd/var/log/ejabberd.log.0" 
+% input: none
+%
+% op: recover ekaf
+%
+% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/recover_kafka_from_log.erl "/data/apps/opt/ejabberd/var/log/ejabberd.log.0" 
 
 echo(off),
 case Args of

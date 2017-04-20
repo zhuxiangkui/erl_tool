@@ -1,8 +1,8 @@
-
 % input: none
 %
 % op: check whether the node is ok
 %
-% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/hello.erl
+% e.g.: ./erl_expect -sname ejabberd@ejabberd-worker -setcookie 'ejabberd'  common/hello.erl
+%		hello world from 'ejabberd@ejabberd-worker'
 
 io:format("hello world from ~p~n",[node()]).

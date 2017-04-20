@@ -1,9 +1,10 @@
-
 % input: Module
 %
 % op: ejabberd / msync version
 %
-% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/get_code_path.erl a b/c d
+% e.g.: ./erl_expect -sname ejabberd@ejabberd-worker -setcookie 'ejabberd' common/get_code_path.erl app_config
+%       ejabberd-worker:/data/apps/opt/ejabberd/lib/message_store-16.03.4-244-gf2e1c17/ebin/app_config.beam
+%
 % File Like This
 % msync.
 % msync_c2s_handler/msync_c2s.

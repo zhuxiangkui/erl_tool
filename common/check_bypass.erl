@@ -1,4 +1,4 @@
-
+%
 % input: none
 %
 % op: check whether is at bypass mode

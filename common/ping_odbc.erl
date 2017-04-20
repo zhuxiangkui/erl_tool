@@ -1,8 +1,10 @@
-%%%
-%% Feature:
-%% paras:
-%% ex: ./erl_expect -sname ejabberd@ebs-ali-beijing-5-pri -setcookie secret $ERL_TOOL_PATH/pign_odbc.erl
-%%
+% input: none
+%
+% op: measure odbc visit time 
+%
+% e.g.: ./erl_expect -sname ejabberd@ejabberd-worker -setcookie 'ejabberd'  common/ping_odbc.erl
+%		odbc conn ejabberd@ejabberd-worker 1 0.321 mysql 3306 <8226.314.0>
+
 echo(off),
 
 SQL = {sql_query, [<<"select 1;">>]},

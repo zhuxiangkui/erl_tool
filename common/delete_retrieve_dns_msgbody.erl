@@ -1,9 +1,8 @@
-
-%% input: RunMode
-%%
-%% op: delete msg according to given jid
-%%
-%% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/delete_retrieve_dns_msgbody.erl RunMode
+% input: RunMode
+%
+% op: delete msg according to given jid
+%
+% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/delete_retrieve_dns_msgbody.erl RunMode
 
 echo(off),
 

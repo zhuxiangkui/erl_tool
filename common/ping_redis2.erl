@@ -1,3 +1,9 @@
+% input: none
+%
+% op: measure redis visit time
+%
+% e.g.: ./erl_expect -sname msync@sdb-ali-hangzhou-ejabberd5 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/ping_redis2.erl
+
 echo(off),
 {A, B, C} = os:timestamp(),
 random:seed(A, B, C),

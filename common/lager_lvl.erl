@@ -2,7 +2,7 @@
 %
 % op: stop lager_monitor (inside message_store_sup)
 %
-% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/stop_lager_monitor.erl
+% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/lager_lvl.erl
 
 echo(on),
 

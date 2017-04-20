@@ -1,8 +1,15 @@
-%%%
-%% Feature:
-%% paras:
-%% ex: ./erl_expect -sname ejabberd@ebs-ali-beijing-5-pri -setcookie secret $ERL_TOOL_PATH/get_ekaf_worker.erl
-%%
+% input: none
+%
+% op: look up info of ekaf
+%
+% e.g.: ./erl_expect -sname ejabberd@ejabberd-worker -setcookie 'ejabberd' common/get_ekaf_worker.erl
+%		Topics:[<<"ejabberd-chat-messages">>,<<"ejabberd-chat-recvmsgs">>,
+%       	<<"ejabberd-chat-offlines">>,<<"im-messages-deliver">>,
+%       	<<"im-messages-offline">>,<<"im-messages-ack">>,
+%       	<<"im-messages-ack-large-group">>,<<"ejabberd-muc-opt">>,
+%       	<<"ejabberd-muc-mem">>]
+% 		WorkerChecks Len:98
+
 echo(off),
 LogKafkaOpts = application:get_env(message_store, log_kafka, []),
 Topics =

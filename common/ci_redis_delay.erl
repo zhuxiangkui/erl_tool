@@ -1,3 +1,13 @@
+% input: none
+%
+% op: check redis delay
+%
+% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/ci_redis_delay.erl
+%       redis_index_delay_max:0.264
+%       redis_index_delay_min:0.207
+%       redis_index_delay_avg:0.2355
+%       ...
+
 echo(off),
 {A, B, C} = os:timestamp(),
 random:seed(A, B, C),

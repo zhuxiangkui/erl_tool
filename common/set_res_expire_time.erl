@@ -1,8 +1,11 @@
-%%%
-%% Feature:
-%% paras: 时间为毫秒（ms）
-%% ex: ./erl_expect -sname ejabberd@ebs-ali-beijing-5-pri -setcookie secret $ERL_TOOL_PATH/set_res_expire_time.erl webim 100
-%%
+% input: Num
+%
+% op: set resource expire time
+%
+% e.g.: ./erl_expect -sname ejabberd@ebs-ali-beijing-5-pri -setcookie secret $ERL_TOOL_PATH/set_res_expire_time.erl webim 100
+%
+%note: ms
+
 echo(off),
 [ResourceIOList, ExpireTimeIOList] = Args,
 Resource = list_to_binary(ResourceIOList),

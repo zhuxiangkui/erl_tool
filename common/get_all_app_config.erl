@@ -1,7 +1,12 @@
-%%%
-% 功能：得到某一个节点的所有 app config
-% 参数：无
-%%%
+% input: none
+%
+% op: look up all app_config in the node
+%
+% e.g.: ./erl_expect -sname ejabberd@ebs-ali-beijing-59-pri common/get_all_app_config.erl
+%       'ejabberd@ebs-ali-beijing-59-pri' jinhe2015#jinhe separate_worker sub
+%		'ejabberd@ebs-ali-beijing-59-pri' szzm#peiliao muc_presence_async true
+%       ...
+
 echo(off),
 
 lists:foreach(

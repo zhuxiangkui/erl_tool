@@ -1,3 +1,9 @@
+% input: none
+%
+% op: measure kafka visit time (worker-topic-partition)
+%
+% e.g.: ./erl_expect -sname ejabberd@ejabberd-worker -setcookie 'ejabberd'  common/ping_kafka2.erl
+
 echo(off),
 
 From = <<"kafka#test_from@easemob.com">>,

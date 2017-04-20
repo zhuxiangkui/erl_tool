@@ -1,9 +1,13 @@
-
 % input: JID
 %
 % op: get offline msgs for JID
 %
-% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/get_offline.erl JID
+% e.g.: ./erl_expect -sname ejabberd@ejabberd-worker -setcookie 'ejabberd'  common/get_offline.erl easemob-demo#chatdemoui_na4
+%		[<<"easemob-demo#chatdemoui_1492069834887@conference.easemob.com">>,<<"1">>,
+% 		<<"_total">>,<<"1">>]
+%		queue <<"easemob-demo#chatdemoui_1492069834887@conference.easemob.com">> 
+%       MID is <<"322541702495601276">>
+%		...
 
 [JID,Resource] = case Args of
                      [ID] ->

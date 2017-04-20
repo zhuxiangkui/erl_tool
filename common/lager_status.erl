@@ -1,9 +1,10 @@
-
 % input: none
 %
 % op: check lager status
 %
-% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/lager_status.erl
+% e.g.: ./erl_expect -sname ejabberd@ejabberd-worker -setcookie 'ejabberd'  common/lager_status.erl
+%		lager log level is 127
+%		lager_queue_len = 0
 
 echo(off),
 

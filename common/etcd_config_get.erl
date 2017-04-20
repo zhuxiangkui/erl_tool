@@ -1,11 +1,11 @@
-
-%%%
-% feature: get configure info from etcd server
-% params : Prefix, Appname, Key(option)
-% example: ./erl_expect -sname ejabberd@ebs-ali-beijing-88 -setcookie secret common/etcd_config_get.erl "/imstest/vip1/msync/workerconfig/all" "msync" "httpc_timeout"
-%          ./erl_expect -sname ejabberd@ebs-ali-beijing-88 -setcookie secret common/etcd_config_get.erl "/imstest/vip1/msync/workerconfig/all" "msync"
-% note   : 在某一台msync/ejabberd 节点上执行即可
-%%%
+% input: Prefix Appname Key(option)
+%
+% op: get configure info from etcd server
+%
+% e.g.: ./erl_expect -sname ejabberd@ebs-ali-beijing-88 -setcookie secret common/etcd_config_get.erl "/imstest/vip1/msync/workerconfig/all" "msync" "httpc_timeout"
+%       ./erl_expect -sname ejabberd@ebs-ali-beijing-88 -setcookie secret common/etcd_config_get.erl "/imstest/vip1/msync/workerconfig/all" "msync"
+%
+% note: run in ejabberd/msync nodes
 
 echo(off),
 

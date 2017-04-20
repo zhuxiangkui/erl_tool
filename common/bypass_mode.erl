@@ -2,7 +2,8 @@
 %
 % op: enable or disable bypass mode for ejabberd / msync
 %
-% e.g.: ./erl_expect -sname msync@sdb-ali-hangzhou-ejabberd5 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/bypass_mode.erl disable
+% e.g.: ./erl_expect -sname ejabberd@ejabberd-worker -setcookie 'ejabberd' common/bypass_mode.erl disable
+%       bypass mode is disabled
 
 echo(off),
 

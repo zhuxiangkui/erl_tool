@@ -1,9 +1,12 @@
-
 % input: Muc
 %
 % op: get Muc online members
 %
-% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/get_group_online_users.erl Muc
+% e.g.: ./erl_expect -sname ejabberd@ejabberd-worker -setcookie 'ejabberd'  common/get_group_online_users.erl easemob-demo#chatdemoui_1492069834887
+%		Input Muc Room like easemob-demo#chatdemoui_group1
+%		Args:["easemob-demo#chatdemoui_1492069834887"] 
+%		muc <<"easemob-demo#chatdemoui_1492069834887">>  online users :[{<<"easemob-demo#chatdemoui_na1">>,
+%		...
 
 echo(off),
 io:format("Input Muc Room like easemob-demo#chatdemoui_group1~n Args:~p ~n", [Args]),

@@ -1,14 +1,13 @@
-%% input: none
-%%
-%% op: start/stop child `easemob_rest_event' under message_store_sup
-%% op: delete message by mid/file/stdin
-%% e.g. 
-%% start: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/message_store.erl start_rest_event
-%% stop: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/message_store.erl stop_rest_event
-%% delete_message_by_mid: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/message_store.erl delete_message_by_mid 279936566221078528
-%% delete_message_by_file: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/message_store.erl delete_message_by_file path/to/mid_file
-%% delete_message_by_stdin: cat path/to/mid_file | ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/message_store.erl delete_message_by_stdin
-
+% input: none
+%
+% op: start/stop child `easemob_rest_event' under message_store_sup
+% op: delete message by mid/file/stdin
+% e.g. 
+% start: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/message_store.erl start_rest_event
+% stop: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/message_store.erl stop_rest_event
+% delete_message_by_mid: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/message_store.erl delete_message_by_mid 279936566221078528
+% delete_message_by_file: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/message_store.erl delete_message_by_file path/to/mid_file
+% delete_message_by_stdin: cat path/to/mid_file | ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/message_store.erl delete_message_by_stdin
 
 echo(off),
 

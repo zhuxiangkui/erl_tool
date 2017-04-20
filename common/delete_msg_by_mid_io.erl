@@ -1,9 +1,8 @@
-
-%% input: RunMode
-%%
-%% op: delete msg according to given mid
-%%
-%% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/delete_msg_by_mid_io.erl RunMode
+% input: RunMode
+%
+% op: delete msg according to given mid
+%
+% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/delete_msg_by_mid_io.erl RunMode
 
 echo(off),
 

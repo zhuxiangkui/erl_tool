@@ -1,3 +1,11 @@
+% input: none
+%
+% op: measure kafka visit time
+%
+% e.g.: ./erl_expect -sname ejabberd@ejabberd-worker -setcookie 'ejabberd'  common/ping_kafka.erl
+%		worker is all right: 'ejabberd@ejabberd-worker' 4.419 ms 1 <8226.531.0>
+%		...
+
 echo(off),
 
 From = <<"kafka#test_from@easemob.com">>,

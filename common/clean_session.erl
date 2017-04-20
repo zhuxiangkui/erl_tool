@@ -1,3 +1,10 @@
+% input: Users
+%
+% op: clean expired session
+%
+% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/clean_session.erl easemob-demo#chatdemoui_na1
+% 
+
 echo(on),
 case Args of
     [UserArgs] ->

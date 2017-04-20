@@ -1,9 +1,16 @@
-
 % input: ID
 %
 % op: get time info from ID
 %
-% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/explain_id.erl ID
+% e.g.: ./erl_expect -sname ejabberd@ejabberd-worker -setcookie 'ejabberd'  common/explain_id.erl 320353223237960508
+%       date -d@1492152847
+%	    Fri Apr 14 06:54:07 UTC 2017
+%		: [{version,0},
+%  		{seconds,74588047},
+%   	{mseconds,167},
+%   	{sequence,0},
+%   	{machine,207},
+%   	{tag,0}]
 
 echo(off),
 [ID0] = Args,

@@ -1,4 +1,3 @@
-
 % input: none
 %
 % op: read one MID from file, read body from codis, then write to mysql

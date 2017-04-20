@@ -1,9 +1,9 @@
-
 % input: none
 %
 % op: get session, codis or mnesia
 %
-% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/get_session_db_type.erl
+% e.g.: ./erl_expect -sname ejabberd@ejabberd-worker -setcookie 'ejabberd'  common/get_session_db_type.erl 
+% 		session_db_type = redis
 
 echo(off),
 

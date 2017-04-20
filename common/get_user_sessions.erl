@@ -1,9 +1,9 @@
-
-%% input: JID
-%%
-%% op: get each session of multi resource for JID
-%%
-%% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/get_user_sessions.erl JID
+% input: JID
+%
+% op: get each session of multi resource for JID
+%
+% e.g.: ./erl_expect -sname ejabberd@ejabberd-worker -setcookie 'ejabberd'  common/get_user_sessions.erl easemob-demo#chatdemoui_na1
+%		 "2017-04-20T04:12:58": Pid = <8522.17823.0>(true), Node = 'ejabberd@ejabberd-conn' Priority = 0 Resource = <<"mobile">>
 
 echo(off),
 [JID] =  Args,

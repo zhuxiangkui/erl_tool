@@ -1,9 +1,8 @@
-
-%% input: none
-%%
-%% op: stop odbc, use ssdb instead
-%%
-%% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/stop_odbc_shard.erl
+% input: none
+%
+% op: stop odbc, use ssdb instead
+%
+% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/stop_odbc_shard.erl
 
 echo(on),
 config_odbc_shards:stop_shard(),

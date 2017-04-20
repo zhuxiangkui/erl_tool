@@ -1,9 +1,9 @@
-%% input: MUCId MemberNum1 DownSpeed1 MemberNum2 DownSpeed2 ...
-%%
-%% op: set chatroom down message speed, if down message speed great than this speed , low priority message will maybe be droped.
-
-%% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/set_muc_down_msg_speed.erl MUCId MemberNum1 DownSpeed1 MemberNum2 DownSpeed2 ...
-%% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/set_muc_down_msg_speed.erl easemob-demo#chatdemoui_1111111 0 1000 1000 30 3000 10
+% input: MUCId MemberNum1 DownSpeed1 MemberNum2 DownSpeed2 ...
+%
+% op: set chatroom down message speed, if down message speed great than this speed , low priority message will maybe be droped.
+%
+% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/set_muc_down_msg_speed.erl MUCId MemberNum1 DownSpeed1 MemberNum2 DownSpeed2 ...
+% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/set_muc_down_msg_speed.erl easemob-demo#chatdemoui_1111111 0 1000 1000 30 3000 10
 
 echo(off),
 [MUCId|Rules]=Args,

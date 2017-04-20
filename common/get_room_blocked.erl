@@ -2,7 +2,11 @@
 %
 % op: get Muc members
 %
-% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/get_room_blocked.erl Muc
+% e.g.: ./erl_expect -sname ejabberd@ejabberd-worker -setcookie 'ejabberd'  common/get_room_blocked.erl easemob-demo#chatdemoui_1492069834887
+%		Input Muc Room like easemob-demo#chatdemoui_group1
+%		MucBlocked:[]
+%		Mute:[] 
+
 echo(off),
 io:format("Input Muc Room like easemob-demo#chatdemoui_group1~n", []),
 [MucList] = Args,

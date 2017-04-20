@@ -1,4 +1,3 @@
-
 % input: MID
 %
 % op: read msg body according to MID

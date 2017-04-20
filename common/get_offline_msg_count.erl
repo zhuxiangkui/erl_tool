@@ -1,9 +1,11 @@
-
 % input: JID
 %
 % op: get offline msg number for JID
 %
-% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/get_offline_msg_count.erl JID
+% e.g.: ./erl_expect -sname ejabberd@ejabberd-worker -setcookie 'ejabberd'  common/get_offline_msg_count.erl easemob-demo#chatdemoui_na4
+%		easemob-demo#chatdemoui_na4 is not online now
+%		easemob-demo#chatdemoui_na4 has 1 offline message(s)
+%    	MID is <<"322541702495601276">>
 
 [JID,Resource] = case Args of
                      [ID] ->

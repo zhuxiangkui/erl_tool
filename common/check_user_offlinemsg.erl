@@ -1,3 +1,10 @@
+% input: File_in File_out
+%
+% op: remove non-offline msg 
+%
+% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/check_user_offlinemsg.erl File_in File_out
+% 
+
 io:format("User~p ~n", [Args]),
 
 [File, Out]  = Args,

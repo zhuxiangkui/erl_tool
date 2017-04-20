@@ -1,3 +1,9 @@
+% input: none
+%
+% op: look up info of processes
+%
+% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' ejabberd/monitor3.erl
+
 N = case Args of
 	[StrN] ->
 	    list_to_integer(StrN);

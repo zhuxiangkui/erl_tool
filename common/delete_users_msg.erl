@@ -1,8 +1,9 @@
-%%%
-%% Feature:
-%% paras:
-%% ex: ./erl_expect -sname ejabberd@ebs-ali-beijing-5-pri -setcookie secret $ERL_TOOL_PATH/delete_users_msg.erl
-%%
+% input: AppKey UserFile
+%
+% op: del msg of users
+%
+% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/delete_users_msg.erl AppKey File_in
+
 echo(on),
 [Appkey, UserFile] = Args,
 {ok, [Users]} = file:consult(UserFile),

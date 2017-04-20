@@ -1,4 +1,3 @@
-
 % input: UserDomain, RunMode
 %
 % op: filter and delete msg according to given keyword

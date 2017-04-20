@@ -1,4 +1,9 @@
-%% Top memory process
+% input: none
+%
+% op: look up info of memory
+%
+% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' ejabberd/meminfo.erl
+
 application:start(os_mon),
 memsup:set_procmem_high_watermark(0.01),
 

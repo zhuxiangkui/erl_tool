@@ -1,3 +1,13 @@
+% input: Pid
+%
+% op: show the process_tree of special process
+%
+% e.g.: ./erl_expect -sname ejabberd@ejabberd-worker -setcookie 'ejabberd'  common/pstree.erl ejabberd
+% 		<0.198.0>(ejabberd): 1
+% 			<0.39.0>: 3
+%   			<0.644.0>(ejabberd_sup): 32
+%		...
+
 echo(off),
 [App0] = Args,
 App = list_to_atom(App0),

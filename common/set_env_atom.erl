@@ -1,3 +1,11 @@
+% input: AppKey ConfigName ConfigValue
+%
+% op: set app_config
+%
+% e.g.: ./erl_expect -sname ejabberd@ejabberd-worker -setcookie 'ejabberd'  common/set_env_atom.erl easemob-demo#chatdemoui roster_only true
+%       plz check the gray deploy config :[[app_config,<<"easemob-demo#chatdemoui">>,
+%				      	true]]
+
 echo(off),
 [App, Name, Value] = Args,
 EnvKey = list_to_atom(Name),

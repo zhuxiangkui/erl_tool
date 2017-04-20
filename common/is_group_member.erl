@@ -1,9 +1,10 @@
-
-% input: Muc, Jid
+% input: Muc Jid
 %
 % op: whether Jid is one member of Muc
 %
-% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/is_group_member.erl Muc Jid
+% e.g.: ./erl_expect -sname ejabberd@ejabberd-worker -setcookie 'ejabberd'  common/is_group_member.erl easemob-demo#chatdemoui_1492069834887 easemob-demo#chatdemoui_na4
+%		Input Muc Room like easemob-demo#chatdemoui_group1 Member like easemob-demo#chatdemoui_mt001 
+%		Muc:<<"easemob-demo#chatdemoui_1492069834887">> Member:<<"easemob-demo#chatdemoui_na4">> Result:true 
 
 echo(off),
 io:format("Input Muc Room like easemob-demo#chatdemoui_group1 Member like easemob-demo#chatdemoui_mt001 ~n", []),

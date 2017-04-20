@@ -1,8 +1,9 @@
-%% input: AppKey, ConfigName
-%%
-%% op: remove ConfigName for AppKey
-%%
-%% e.g.: ./erl_expect -sname msync@sdb-ali-hangzhou-ejabberd5 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/remove_app_config.erl easemob-demo#chatdemoui check_nickname
+% input: AppKey, ConfigName
+%
+% op: remove ConfigName for AppKey
+%
+% e.g.: ./erl_expect -sname ejabberd@ejabberd-worker -setcookie 'ejabberd'  common/remove_app_config.erl easemob-demo#chatdemoui check_nickname
+%		remove check_nickname for easemob-demo#chatdemoui succeed
 
 echo(off),
 

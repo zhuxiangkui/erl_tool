@@ -1,3 +1,10 @@
+% input: none
+%
+% op: measure odbc visit time 
+%
+% e.g.: ./erl_expect -sname ejabberd@ejabberd-worker -setcookie 'ejabberd'  common/ping_odbc_shards.erl
+%		error odbc conn not exist ejabberd@ejabberd-worker
+
 echo(off),
 WorkerList =
 fun(WorkName) ->

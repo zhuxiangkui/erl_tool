@@ -1,3 +1,12 @@
+% input: Num
+%
+% op: check memory heap
+%
+% e.g.: ./erl_expect -sname ejabberd@ejabberd-worker -setcookie 'ejabberd' common/check_memory_heap.erl 1
+%       [{1492600803441, {<8226.684.0>,284640,
+%                  [{registered_name,health_monitor},
+%       ...
+
 Num = case Args of
 	[StrN] ->
 	    list_to_integer(StrN);

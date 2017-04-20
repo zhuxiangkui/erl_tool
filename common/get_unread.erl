@@ -1,8 +1,10 @@
-%%%
-%% Feature:
-%% paras:
-%% ex: ./erl_expect -sname ejabberd@ebs-ali-beijing-5-pri -setcookie secret $ERL_TOOL_PATH/get_unread.erl easemob-demo#chatdemoui_mt001 mobile
-%%
+% input: UserIOList ResourceIOList
+%
+% op: get offline msgs of users 
+%
+% e.g.: ./erl_expect -sname ejabberd@ejabberd-worker -setcookie 'ejabberd'  common/get_unread.erl easemob-demo#chatdemoui_na4 moblie
+%		Unread:[]
+
 echo(off),
 [UserIOList, ResourceIOList] = Args,
 User = list_to_binary(UserIOList),

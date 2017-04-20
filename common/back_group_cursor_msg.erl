@@ -1,12 +1,13 @@
-%%%
-%% Feature:
-%% paras:
-%% ex: ./erl_expect -sname ejabberd@ebs-ali-beijing-5-pri -setcookie secret $ERL_TOOL_PATH/back_group_cursor_msg.erl
-%%
-%%%     1. get members of cursor group
-%%%     2. get users' resources
-%%%     3. get users' resources's msgid list
-%%%     4. lpush the msg into index
+% input: GroupIDList
+%
+% op: 1. get members of cursor group
+%     2. get users' resources
+%     3. get users' resources's msgid list
+%     4. lpush the msg into index
+%
+% e.g.: ./erl_expect -sname ejabberd@ebs-ali-beijing-5-pri -setcookie secret $ERL_TOOL_PATH/back_group_cursor_msg.erl easemob-demo#chatdemoui_1492069834887
+%  
+
 echo(off),
 [GroupIDList] = Args,
 GroupID = list_to_binary(GroupIDList),

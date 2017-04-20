@@ -1,4 +1,3 @@
-
 % input: none
 %
 % op: kafka double channel, change to auxiliary channel

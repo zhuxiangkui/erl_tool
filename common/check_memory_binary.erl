@@ -1,3 +1,10 @@
+% input: Num
+%
+% op: check memory binary
+%
+% e.g.: ./erl_expect -sname ejabberd@ejabberd-worker -setcookie 'ejabberd' common/check_memory_binary.erl 1
+%       total binary = 0.1081991195678711 Mb; top
+%       ...
 N = case Args of
 	[StrN] ->
 	    list_to_integer(StrN);

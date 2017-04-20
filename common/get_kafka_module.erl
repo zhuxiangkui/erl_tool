@@ -1,4 +1,3 @@
-
 % input: none
 %
 % op: get current kafka_client_module, brod or ekaf

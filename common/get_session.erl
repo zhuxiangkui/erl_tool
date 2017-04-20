@@ -1,4 +1,3 @@
-
 % input: JID
 %
 % op: get session for JID

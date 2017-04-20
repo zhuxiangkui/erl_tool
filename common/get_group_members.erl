@@ -1,9 +1,23 @@
-
 % input: Muc
 %
 % op: get Muc members
 %
-% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/get_group_members.erl Muc
+% e.g.: ./erl_expect -sname ejabberd@ejabberd-worker -setcookie 'ejabberd'  common/get_group_members.erl easemob-demo#chatdemoui_1492069834887
+%		Input Muc Room like easemob-demo#chatdemoui_group1
+%		members in cache:[{<<"easemob-demo#chatdemoui_na1">>,<<"easemob.com">>,owner,
+%                   <<>>},
+%                  {<<"easemob-demo#chatdemoui_na3">>,<<"easemob.com">>,member,
+%                   <<>>},
+%                  {<<"easemob-demo#chatdemoui_na2">>,<<"easemob.com">>,member,
+%                   <<>>}] 
+% 		Members num :3 
+%		members in DB:[{<<"easemob-demo#chatdemoui_na3">>,<<"easemob.com">>,member,
+%                <<>>},
+%               {<<"easemob-demo#chatdemoui_na1">>,<<"easemob.com">>,owner,
+%                <<>>},
+%               {<<"easemob-demo#chatdemoui_na2">>,<<"easemob.com">>,member,
+%                <<>>}] 
+% 		Members num :3 
 
 echo(off),
 io:format("Input Muc Room like easemob-demo#chatdemoui_group1~n", []),

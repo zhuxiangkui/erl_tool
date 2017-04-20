@@ -1,3 +1,9 @@
+% input: none
+%
+% op: kill the processes of odbc whose message_queue_len is large than 500
+%
+% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/kill_odbc_do_recv.erl
+
 lists:foreach(
   fun(P) ->
 	  try process_info(P, [current_stacktrace,message_queue_len]) of

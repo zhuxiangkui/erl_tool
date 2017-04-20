@@ -1,3 +1,10 @@
+% input: AppKey ConfigName | AppKey ConfigName ConfigValue
+%
+% op: look up or set app_config
+%
+% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/app_config.erl easemob-demo#chatdemoui roster_only
+%       easemob-demo#chatdemoui:roster_only = false
+
 echo(off),
 case Args of
     [AppKey, ConfigName] ->

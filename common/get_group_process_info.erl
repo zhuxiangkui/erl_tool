@@ -1,3 +1,12 @@
+% input: MID
+%
+% op: look up info of group process
+%
+% e.g.: ./erl_expect -sname ejabberd@ejabberd-worker -setcookie 'ejabberd'  common/get_group_process_info.erl easemob-demo#chatdemoui_1492069834887
+% 		Input Muc Room like easemob-demo#chatdemoui_group1
+% 		Args:["easemob-demo#chatdemoui_1492069834887"] 
+%		Muc on Node:'ejabberd@ejabberd-worker' MessageLength:{message_queue_len,0}
+
 echo(off),
 io:format("Input Muc Room like easemob-demo#chatdemoui_group1~n Args:~p ~n", [Args]),
 [MucArgs] = Args,

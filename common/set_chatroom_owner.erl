@@ -1,9 +1,10 @@
-
 % input: AppKey
 %
 % op: set owner if AppKey has group without owner
 %
-% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/set_chatroom_owner.erl AppKey
+% e.g.: ./erl_expect -sname ejabberd@ejabberd-worker -setcookie 'ejabberd'  common/set_chatroom_owner.erl easemob-demo#chatdemoui
+%		appkey:<<"easemob-demo#chatdemoui">> 
+%		ChatRoomsWithOutOwner:[] 
 
 echo(off),
 case Args of

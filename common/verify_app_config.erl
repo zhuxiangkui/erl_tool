@@ -1,4 +1,3 @@
-
 % input: BaseNode
 %
 % op: check whether the config is same with BaseNode's config

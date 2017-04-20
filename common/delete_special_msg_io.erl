@@ -1,4 +1,3 @@
-
 % input: RunMode
 %
 % op: filter and delete msg according to given keyword, but UserDomain was read from stdin

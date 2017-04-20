@@ -1,9 +1,9 @@
-
 % input: all | sub | muc
 %
 % op: get store nodes
 %
-% e.g.: ./erl_expect -sname msync@sdb-ali-hangzhou-ejabberd5 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/get_store_nodes.erl all
+% e.g.: ./erl_expect -sname ejabberd@ejabberd-worker -setcookie 'ejabberd'  common/get_store_nodes.erl muc
+%		'ejabberd@ejabberd-session'
 
 echo(off),
 Type =

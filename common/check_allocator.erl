@@ -1,3 +1,12 @@
+% input: none
+%
+% op: 
+%
+% e.g.: ./erl_expect -sname ejabberd@ejabberd-worker -setcookie 'ejabberd' common/check_allocator.erl
+%       1492601121184,temp_alloc_i0_calls_1_sys_realloc_2,0
+%		1492601121184,temp_alloc_i0_calls_1_sys_realloc_1,0 
+%       ...
+
 Allocators = [
               {temp_alloc,"Allocator used for temporary allocations."},
               {eheap_alloc,"Allocator used for Erlang heap data, such as Erlang process heaps."},

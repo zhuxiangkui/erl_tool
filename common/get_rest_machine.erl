@@ -1,3 +1,10 @@
+% input: none
+%
+% op: get rest machines
+%
+% e.g.: ./erl_expect -sname ejabberd@ejabberd-worker -setcookie 'ejabberd'  common/get_rest_machine.erl
+%		Result:['ejabberd@ejabberd-restnormal']	
+
 echo(off),
 Nodes = nodes(),
 Result =

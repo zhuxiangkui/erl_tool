@@ -1,4 +1,3 @@
-
 % input: none
 %
 % op: set kafka_client_module to brod

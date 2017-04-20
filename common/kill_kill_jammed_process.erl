@@ -1,4 +1,3 @@
-
 % input: Len
 %
 % op: kill process whose message_queue_len is large than Len
