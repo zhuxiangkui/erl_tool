@@ -1,9 +1,10 @@
-
 % input: JID
 %
 % op: load all messages sent/received for the JID
 %
 % e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' ejabberd/message_history.erl
+%
+% note: this tools is out of date
 
 echo(off),
 [User0] = Args,

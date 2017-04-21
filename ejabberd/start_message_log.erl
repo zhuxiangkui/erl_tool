@@ -1,4 +1,3 @@
-
 % input: none
 %
 % op: add msg log hook for ejabberd

@@ -1,9 +1,12 @@
-
 % input: JID
 %
 % op: load all messages sent/received for the JID
 %
-% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' ejabberd/message_history.erl
+% e.g.: ./erl_expect -sname ejabberd@ejabberd-worker -setcookie 'ejabberd' ejabberd/recent_msg.erl easemob-demo#chatdemoui_na3
+%		322541702495601276	<message from='easemob-demo#chatdemoui_na1@easemob.com' to='easemob-demo#chatdemoui_1492069834887@conference.easemob.com' id='322541702495601276' type='groupchat'><body>{&quot;from&quot;:&quot;na1&quot;,&quot;to&quot;:&quot;1492069834887&quot;,&quot;bodies&quot;:[{&quot;type&quot;:&quot;txt&quot;,&quot;msg&quot;:&quot;aasd&quot;}],&quot;ext&quot;:{}}</body><delay xmlns='urn:xmpp:delay' stamp='2017-04-20T04:26:32.204Z'/></message>
+%		...
+%
+% note:store index in mysql is cancel so just get offline msg
 
 echo(off),
 [User0] = Args,

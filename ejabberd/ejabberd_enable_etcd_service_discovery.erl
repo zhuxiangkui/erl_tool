@@ -1,9 +1,8 @@
-
-%%%
-% feature: enable etcd service discovery feature on ejabberd
-% params :
-% example: ./erl_expect -sname ejabberd@ebs-ali-beijing-88 -setcookie secret ejabberd/ejabberd_enable_etcd_service_discovery.erl
-%%%
+% input: none
+%
+% op: enable etcd service discovery feature on ejabberd
+%
+% e.g.: ./erl_expect -sname ejabberd@ebs-ali-beijing-88 -setcookie secret ejabberd/ejabberd_enable_etcd_service_discovery.erl
 
 echo(off),
 EtcdClient =

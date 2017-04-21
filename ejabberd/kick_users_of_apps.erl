@@ -1,9 +1,11 @@
-%%%
-% 功能：把某些 app 的用户，踢下线
-% 参数：<app1> <app2> <app3>
-% 用例：./erl_expect -sname ejabberd@ebs-ali-beijing-88 -setcookie secret ejabberd/kick_user_of_apps 'easemob-demo#no1' 'easemob-demo#no2' 'easemob-demo#no3'
-% 注意事项：一定要在 session 节点上运行。
-%%%
+% input: AppKey1 AppKey2 AppKey3 ...
+%
+% op: kill off the users of Apps
+%
+% e.g.: ./erl_expect -sname ejabberd@ebs-ali-beijing-88 -setcookie secret ejabberd/kick_user_of_apps.erl 'easemob-demo#no1' 'easemob-demo#no2' 'easemob-demo#no3'
+%
+%note: run in session nodes
+
 echo(off),
 AppKeys = lists:map(fun(X) -> erlang:list_to_binary(X) end, Args),
 

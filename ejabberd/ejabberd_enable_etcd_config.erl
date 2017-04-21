@@ -1,9 +1,8 @@
-
-%%%
-% feature: enable etcd configure management feature on ejabberd
-% params :
-% example: ./erl_expect -sname ejabberd@ebs-ali-beijing-88 -setcookie secret ejabberd/ejabberd_enable_etcd_config.erl
-%%%
+% input: none
+%
+% op: enable etcd configure management feature on ejabberd
+%
+% e.g.: ./erl_expect -sname ejabberd@ebs-ali-beijing-88 -setcookie secret ejabberd/ejabberd_enable_etcd_config.erl
 
 echo(off),
 EtcdClient =

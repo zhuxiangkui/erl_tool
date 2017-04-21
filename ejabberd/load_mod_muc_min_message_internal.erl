@@ -1,9 +1,11 @@
-%%%
-%% Feature:
-%% paras:
-%% ex: ./erl_expect -sname ejabberd@ebs-ali-beijing-5-pri -setcookie secret $ERL_TOOL_PATH/load_mod_muc_min_message_internal.erl
-%%
-echo(on),
+% input: none
+%
+% op: load muc min message interval
+%
+% e.g.: ./erl_expect -sname ejabberd@ejabberd-worker -setcookie 'ejabberd' ejabberd/load_mod_muc_min_message_internal.erl
+% 		MinMessageInternal:0.2
+
+echo(off),
 Module = mod_muc,
 Host = <<"easemob.com">>,
 Opts = ejabberd_config:get_option({modules,global},fun(Mods) -> proplists:get_value(Module, Mods) end, []),

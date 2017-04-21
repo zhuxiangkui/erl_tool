@@ -1,4 +1,3 @@
-
 % input: none
 %
 % op: stop mod_easemob_sendmsg for ejabberd

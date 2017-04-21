@@ -1,4 +1,3 @@
-
 % input: none
 %
 % op: get polling_offline_time

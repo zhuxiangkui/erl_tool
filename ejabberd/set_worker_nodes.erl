@@ -1,4 +1,3 @@
-
 % input: [all | sub | muc] ++ NodeList
 %
 % op: for ejabberd

@@ -1,4 +1,3 @@
-
 % input: all | sub
 %
 % op: restart worker nodes for ejabberd

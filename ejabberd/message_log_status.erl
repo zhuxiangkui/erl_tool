@@ -1,4 +1,3 @@
-
 % input: none
 %
 % op: check ejabberd log status

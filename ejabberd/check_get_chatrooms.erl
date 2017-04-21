@@ -1,8 +1,12 @@
-%%%
-%% Feature:
-%% paras:
-%% ex: ./erl_expect -sname ejabberd@ebs-ali-beijing-5-pri -setcookie secret $ERL_TOOL_PATH/check_get_chatrooms.erl
-%%
+% input: AppKeyList
+%
+% op: check the delay of get chatroom
+%
+% e.g.: ./erl_expect -sname ejabberd@ebs-ali-beijing-59-pri ejabberd/check_get_chatrooms.erl easemob-demo#chatdemoui
+%		get group time:[2691,2494,2188,2207,2726,2524,2316,2512,2439,2583] 
+%		get group num time:[2673,2572,2350,4100,2590,2629,2576,2385,2636,2339] 
+%		Ret:{3363411,ok}
+
 echo(off),
 [AppKeyList] = Args,
 AppKey = erlang:list_to_binary(AppKeyList),

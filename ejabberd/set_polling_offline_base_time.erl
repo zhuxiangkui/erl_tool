@@ -1,9 +1,9 @@
-
 % input: Time
 %
 % op: set polling_offline_base_time
 %
-% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd4 -setcookie 'LTBEXKHWOCIRRSEUNSYS' ejabberd/set_polling_offline_base_time.erl
+% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd4 -setcookie 'LTBEXKHWOCIRRSEUNSYS' ejabberd/set_polling_offline_base_time.erl 300001
+%		polling_offline_base_time is 300001
 
 echo(off),
 

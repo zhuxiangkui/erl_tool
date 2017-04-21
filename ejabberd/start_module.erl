@@ -1,3 +1,9 @@
+% input: Modules
+%
+% op: start module
+%
+% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd4 -setcookie 'LTBEXKHWOCIRRSEUNSYS' ejabberd/start_module.erl Modules
+
 echo(on),
 lists:foreach(
    fun(M) ->

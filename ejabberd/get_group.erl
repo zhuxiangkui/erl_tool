@@ -2,7 +2,21 @@
 %
 % op: get status of GroupId
 %
-% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' ejabberd/get_group.erl xxx
+% e.g.: ./erl_expect -sname ejabberd@ejabberd-worker -setcookie 'ejabberd' ejabberd/get_group.erl easemob-demo#chatdemoui_1492069834887
+%		detail = {ok,[<<"title">>,<<"Party_Bos">>,<<"description">>,<<"aas">>,
+%              	<<"public">>,<<"false">>,<<"members_only">>,<<"true">>,
+%              	<<"allow_user_invites">>,<<"false">>,<<"max_users">>,<<"200">>,
+%              	<<"last_modified">>,<<"1492661611655">>,<<"type">>,<<"group">>,
+%             	<<"created">>,<<"1492152321152">>,<<"owner">>,
+%              	<<"easemob-demo#chatdemoui_na1">>]}
+%Affiliations in DB: 4
+%		easemob-demo#chatdemoui_na3
+%		easemob-demo#chatdemoui_na1
+%		easemob-demo#chatdemoui_na2
+%		easemob-demo#chatdemoui_na4
+%mute: {ok,[]}
+%outcast: {ok,[]}
+%the group process is not alive
 
 echo(off),
 [GroupId] = Args,

@@ -1,8 +1,9 @@
-%% input: VSN
-%%
-%% op: downgrade to specific_VSN
-%%
-%% e.g.: ./erl_expect -sname msync@sdb-ali-hangzhou-ejabberd5 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/downgrade_release_specific 17.3.7.0
+% input: VSN
+%
+% op: downgrade to specific_VSN
+%
+% e.g.: ./erl_expect -sname msync@sdb-ali-hangzhou-ejabberd5 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/downgrade_release_specific 17.3.7.0
+
 echo(off),
 [Vsn] = Args,
 

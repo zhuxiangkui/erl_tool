@@ -1,3 +1,9 @@
+% input: Time
+%
+% op: set health check params
+%
+% e.g.: ./erl_expect -sname ejabberd@ejabberd-worker -setcookie 'ejabberd' ejabberd/set_health_check_param webim
+
 [Service] = Args,
 
 S = binary_to_atom(list_to_binary(Service), latin1),

@@ -1,5 +1,8 @@
-%% ./erl_expect -sname ejabberd@ebs-ali-beijing-5-pri ejabberd/chk_whole_table_lock.erl $(cat /data/shell/ejabberlist.txt |grep -v '#' | sed 's/.*/\0-pri/g')
-
+% input: ejabberdlist
+%
+% op: check if table is locked of all nodes
+%
+% e.g.: ./erl_expect -sname ejabberd@ebs-ali-beijing-5-pri ejabberd/chk_whole_table_lock.erl $(cat /data/shell/ejabberlist.txt |grep -v '#' | sed 's/.*/\0-pri/g')
 
 Nodes = lists:map(fun(Host) -> list_to_atom("ejabberd@" ++ Host) end,
 		  Args),

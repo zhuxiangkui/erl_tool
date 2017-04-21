@@ -1,3 +1,9 @@
+% input: none
+%
+% op: restart odbc
+%
+% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' ejabberd/restart_odbc.erl
+
 echo(off),
 F1 =
 fun( P ) ->

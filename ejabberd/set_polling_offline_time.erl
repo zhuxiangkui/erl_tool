@@ -1,4 +1,3 @@
-
 % input: Time
 %
 % op: set polling_offline_time

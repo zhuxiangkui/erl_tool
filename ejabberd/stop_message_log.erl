@@ -1,4 +1,3 @@
-
 % input: none
 %
 % op: delete msg log hook for ejabberd

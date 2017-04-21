@@ -1,3 +1,9 @@
+% input: cid
+%
+% op: clean up chatroom
+%
+% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' ejabberd/cleanup_chatroom.erl easemob-demo#chatdemoui_181611163585347584
+
 echo(off),
 
 Worker = mod_easemob_cache_query_cmd:client(any),
@@ -81,7 +87,7 @@ fun(ChatRoomId) ->
         end
 end,
 
-ChatRoomIdExample = <<"easemob-demo#chatdemoui_181611163585347584">>,
+ChatRoomIdExample = list_to_binary(Args),
 DoClean(ChatRoomIdExample),
 ok.
 

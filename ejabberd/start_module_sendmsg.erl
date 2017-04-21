@@ -1,4 +1,3 @@
-
 % input: none
 %
 % op: start mod_easemob_sendmsg for ejabberd
