@@ -46,6 +46,7 @@ fun
 (write_default_res, V) when is_boolean(V) -> V;
 (send_presence, V) when is_boolean(V) -> V;
 (send_absence, V) when is_boolean(V) -> V;
+(webim, V) when is_boolean(V) -> V;
 (Key, Value) ->
     io:format("error: invalid config name or value  ~s=~s~n",[Key, Value]),
     exit(normal)
