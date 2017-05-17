@@ -6,18 +6,16 @@
 %%% @end
 %%% Created :
 %%%-------------------------------------------------------------------
--module(codis_scan).
+-module(ejabberd_delete_bad_user_session).
 
-%% delete_bad_session:
-%% codis_scan:scan("10.46.175.163", 18087, codis, delete_bad_session, [true], 1000000000).
-%% codis_scan:stop_all(delete_bad_session).
-
-%% remove_cid_from_user_has_muc_mid:
-%% codis_scan:scan("10.46.175.163", 18087, codis, remove_cid_from_user_has_muc_mid, [["warmnut#ygng", "woniu#woniu","soulapp#soul"], true], 1000000000).
-%% codis_scan:stop_all(remove_cid_from_user_has_muc_mid).
+%% delete bad user session, must run in ejabberdctl debug
+%% ejabberd_delete_bad_user_session:start("10.46.175.163", 18087, codis).
+%% ejabberd_delete_bad_user_session:stop().
 
 %% API
 -export([
+         start/3,
+         stop/0,
          scan/6,
          scan_worker/5,
          do_scan/6,
@@ -34,6 +32,12 @@
 %%% API
 %%%===================================================================
 
+start(Host, Port, CodisOrRedis) ->
+    scan(Host, Port, CodisOrRedis, delete_bad_user_session, [true], 1000000000).
+
+stop() ->
+    stop_all(delete_bad_user_session).
+    
 scan(Host, Port, CodisOrRedis, RunMode, RunArgs, MaxScan) ->
     stop_all(RunMode),
     ServerList = server_list(Host, Port, CodisOrRedis),
@@ -113,7 +117,7 @@ do_handle_key(Key, remove_cid_from_user_has_muc_mid, [AppKeys, IsDel]) ->
         _ ->
             skip
     end;
-do_handle_key(Key, delete_bad_session, [IsDel]) ->
+do_handle_key(Key, delete_bad_user_session, [IsDel]) ->
     case binary_to_list(Key) of
         "im:sr:" ++ Rest when length(Rest) > 0 ->
             User = list_to_binary(Rest),
