@@ -26,7 +26,9 @@
 
 -define(SCAN_COUNT, 1000).
 -define(REDIS_TIMEOUT, 60000).
--include("logger.hrl").
+-define(INFO_MSG, error_logger:info_msg).
+-define(ERROR_MSG, error_logger:error_msg).
+
 -record(session, {usr, sid, us, priority, info}).
 %%%===================================================================
 %%% API
