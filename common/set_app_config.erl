@@ -49,6 +49,8 @@ fun
 (webim, V) when is_boolean(V) -> V;
 (send_group_presence, V) when is_boolean(V) -> V;
 (send_chatroom_presence, V) when is_boolean(V) -> V;
+(chat_history_num, V) -> V;
+(msg_page_size, V) -> V;
 (Key, Value) ->
     io:format("error: invalid config name or value  ~s=~s~n",[Key, Value]),
     exit(normal)
