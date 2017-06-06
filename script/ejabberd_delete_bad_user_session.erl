@@ -21,7 +21,9 @@
          do_scan/6,
          do_handle_key/3,
          start_from_codis/2,
-         stop_all/1
+         stop_all/1,
+         is_running/0,
+         is_good_exit/0
 ]).
 
 -define(SCAN_COUNT, 1000).
@@ -39,7 +41,27 @@ start(Host, Port, CodisOrRedis) ->
 
 stop() ->
     stop_all(delete_bad_user_session).
-    
+
+is_running() ->
+    Pids = application:get_env(message_store, {codis_scan_pid_list, delete_bad_user_session}, []),
+    case [Pid||Pid<-Pids, is_process_alive(Pid)] of
+        [] ->
+            false;
+        _ ->
+            true
+    end.
+
+is_good_exit() ->
+    RunMode = delete_bad_user_session,
+    Pids = application:get_env(message_store, {codis_scan_pid_list, RunMode}, []),
+    case [Pid||Pid<-Pids, 
+            not is_process_alive(Pid), 
+            application:get_env(message_store, {codis_scan_result, RunMode, Pid}, exit) /= ok] of
+        [] -> true;
+        _ ->
+            false
+    end.
+
 scan(Host, Port, CodisOrRedis, RunMode, RunArgs, MaxScan) ->
     stop_all(RunMode),
     ServerList = server_list(Host, Port, CodisOrRedis),
@@ -55,7 +77,11 @@ server_list(Host, Port, redis) ->
     [{Host,Port}].
 
 stop_all(RunMode) ->
-    [exit(OldPid, kill)||OldPid<-application:get_env(message_store, {codis_scan_pid_list, RunMode}, [])],
+    [begin
+         application:unset_env(message_store, {codis_scan_result, RunMode, OldPid}),
+         exit(OldPid, kill)
+     end||OldPid<-application:get_env(message_store, {codis_scan_pid_list, RunMode}, [])],
+    application:unset_env(message_store, {codis_scan_pid_list, RunMode}),
     ok.
 
 scan_worker(RedisHost, RedisPort, RunMode, RunArgs, MaxScan) ->
@@ -67,16 +93,19 @@ do_scan(RedisHost, RedisPort, RunMode, RunArgs, Cursor, MaxScan) when MaxScan > 
         {ok, finish, List} ->
             do_handle(List, RunMode, RunArgs),
             ?INFO_MSG("Scan finish with finish:s=~p", [ {RedisHost,RedisPort}]),
+            application:set_env(message_store, {codis_scan_result, RunMode, self()}, ok),
             ok;
         {ok, Next, List}->
             do_handle(List, RunMode, RunArgs),
             ?MODULE:do_scan(RedisHost, RedisPort, RunMode, RunArgs, Next, MaxScan-1);
         {error, Error} ->
             ?INFO_MSG("Scan finish with Error:~p,s=~p", [Error, {RedisHost,RedisPort}]),
+            application:set_env(message_store, {codis_scan_result, RunMode, self()}, {error, Error}),
             {error, Error}
     end;
-do_scan(RedisHost, RedisPort, _RunMode, _RunArgs, _Cursor, _MaxScan) ->
+do_scan(RedisHost, RedisPort, RunMode, _RunArgs, _Cursor, _MaxScan) ->
     ?INFO_MSG("Scan finish with :~p,s=~p", [max_scan, {RedisHost,RedisPort}]),
+    application:set_env(message_store, {codis_scan_result, RunMode, self()}, ok),
     ok.
 
 
