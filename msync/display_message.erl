@@ -1,4 +1,4 @@
-% input: AppKey Num
+% input: Num
 %
 % op: display message content
 %
@@ -8,27 +8,30 @@ echo(off),
 
 Display =
 fun (Keys) ->
-        lists:foreach(fun (Key) ->
-                              io:format("key: ~p~n", [Key]),
-                              case easemob_redis:q(index, [get, Key]) of
-                                  {ok, Body} ->
-                                      try msync_msg:decode_meta(Body) of
+        Qs = [[get, Key] || Key <- Keys],
+        case easemob_redis:qp(index, Qs) of
+            Bodies when is_list(Bodies) ->
+                lists:foreach(fun ({ok, B}) ->
+                                      try msync_msg:decode_meta(B) of
                                           Message ->
                                               io:format("message body: ~p~n", [Message])
                                       catch
                                           _C: _E ->
                                               ignore
                                       end;
-                                  _ ->
+                                  (_) ->
                                       ignore
-                              end
-                      end, Keys)
-          end,
+                              end, Bodies);
+            _ ->
+                ignore
+        end
+end,
 
 Scan =
 fun S(Cursor, Num) ->
         case Num =< 0 of
             true ->
+                io:format("display finished~n"),
                 ok;
             false ->
                 Size = case Num < 100 of
@@ -39,7 +42,8 @@ fun S(Cursor, Num) ->
                        end,
                 case easemob_redis:q(index, [scan, Cursor, match, <<"im:message:*">>, count, Size]) of
                     {ok, [<<"0">>, Keys]} ->
-                        Display(Keys);
+                        Display(Keys),
+                        io:format("display finished~n");
                     {ok, [NextCursor, Keys]} ->
                         Display(Keys),
                         S(NextCursor, Num - length(Keys));
