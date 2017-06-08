@@ -2,7 +2,7 @@
 
 %% op: measure redis visit time
 
-%% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/ping_thrift.erl 
+%% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd3 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/ping_thrift.erl auth true
 
 echo(off),
 {ThriftType, LogException} =
@@ -91,7 +91,7 @@ case ThriftType of
                 end
         end;
     conference ->
-        case im_thrift:call(conference_service_thrift, join_p2p_voice, [LUser, inet_parse:ntoa(IP), To, inet_parse:ntoa(IP)], Block, Timeout) of
+        case im_thrift:call(conference_service_thrift, createP2PVoice, [LUser, inet_parse:ntoa(IP), To, inet_parse:ntoa(IP)], Block, Timeout) of
             {ok, _} ->
                 ok;
             {exception, _} ->
