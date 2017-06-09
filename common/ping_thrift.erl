@@ -33,7 +33,7 @@ case ThriftType of
                         io:format("Auth thrift exception:~p ~n", [Exception]),
                         exit(1);
                     false ->
-                        ok
+                        exit(1)
                 end
         end;
     group ->
@@ -51,7 +51,7 @@ case ThriftType of
                         io:format("Group thrift exception:~p ~n", [Exception]),
                         exit(1);
                     false ->
-                        ok
+                        exit(1)
                 end
         end;
     antispam ->
@@ -71,7 +71,7 @@ case ThriftType of
                         io:format("Antispam thrift exception:~p ~n", [Exception]),
                         exit(1);
                     false ->
-                        ok
+                        exit(1)
                 end
         end;
     keyword ->
@@ -87,7 +87,7 @@ case ThriftType of
                         io:format("Keyword thrift exception:~p ~n", [Exception]),
                         exit(1);
                     false ->
-                        ok
+                        exit(1)
                 end
         end;
     conference ->
@@ -102,7 +102,7 @@ case ThriftType of
                         io:format("Conference thrift exception:~p ~n", [Exception]),
                         exit(1);
                     false ->
-                        ok
+                        exit(1)
                 end
         end;
     rtc ->
@@ -126,7 +126,7 @@ case ThriftType of
                         io:format("RTC thrift exception:~p ~n", [Exception]),
                         exit(1);
                     false ->
-                        ok
+                        exit(1)
                 end
         end
 end.
