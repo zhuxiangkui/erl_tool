@@ -5,15 +5,23 @@
 %%
 echo(off),
 
-
+Result =
 [ begin 
       {StateName, WorkerNum, OverFlowNum, MonitorNum} = poolboy:status(Service),
       if StateName == full ->
-              io:format("WARNING !!!!!  ~p StateName: ~p WorkerNum ~p  OverFlowNum ~p MonitorNum:~p ~n", [Service, StateName, WorkerNum, OverFlowNum, MonitorNum]);
+              io:format("WARNING !!!!!  ~p StateName: ~p WorkerNum ~p  OverFlowNum ~p MonitorNum:~p ~n", [Service, StateName, WorkerNum, OverFlowNum, MonitorNum]),
+              2;
          OverFlowNum > 0 ->
-              io:format("WARNING ~p StateName :~p Worker ~p OverFlowNum ~p MonitorNum:~p ~n", [Service, StateName, WorkerNum, OverFlowNum, MonitorNum]);
+              io:format("WARNING ~p StateName :~p Worker ~p OverFlowNum ~p MonitorNum:~p ~n", [Service, StateName, WorkerNum, OverFlowNum, MonitorNum]),
+              1;
          true ->
-              ignore
+              0
       end
   end || Service <- [user_service_thrift, conference_service_thrift, rtc_service_thrift, groupService_thrift, behavior_service_thrift, text_parse_service_thrift]],
-ok.
+R = lists:foldl(fun(Acc, Ret) -> erlang:max(Acc, Ret) end, 0, Result),
+case R > 0 of
+    true ->
+        exit(R);
+    false ->
+        ignore
+end.
