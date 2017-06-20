@@ -9,9 +9,9 @@ echo(off),
 [ begin 
       {StateName, WorkerNum, OverFlowNum, MonitorNum} = poolboy:status(Service),
       if StateName == full ->
-              io:format("WARNING !!!!!  ~p WorkerNum ~p  OverFlowNum ~p MonitorNum:~p ~n", [Service, WorkerNum, OverFlowNum, MonitorNum]);
+              io:format("WARNING !!!!!  ~p StateName: ~p WorkerNum ~p  OverFlowNum ~p MonitorNum:~p ~n", [Service, StateName, WorkerNum, OverFlowNum, MonitorNum]);
          OverFlowNum > 0 ->
-              io:format("WARNING ~p Worker ~p OverFlowNum ~p MonitorNum:~p ~n", [Service, WorkerNum, OverFlowNum, MonitorNum]);
+              io:format("WARNING ~p StateName :~p Worker ~p OverFlowNum ~p MonitorNum:~p ~n", [Service, StateName, WorkerNum, OverFlowNum, MonitorNum]);
          true ->
               ignore
       end
