@@ -7,6 +7,42 @@
 
 echo(off),
 
+DoDel =
+fun (Type, AppKey, Start, End) ->
+        Q = [zrange, <<"im:", AppKey/binary, ":", Type/binary>>, Start, End],
+        case easemob_redis:q(appconfig, Q) of
+            {error, Reason} ->
+                io:format("get group or chatroom for appkey: ~p failed, "
+                          "start: ~p, end: ~p, reason: ~p~n",
+                          [AppKey, Start, End, {appconfig, Reason}]),
+                0;
+            {ok, RGs} ->
+                Gs = [<<"im:gmsg:", R/binary, "@conference.easemob.com">>
+                          || R <- RGs],
+                Qs = [[del, G] || G <- Gs],
+                case easemob_redis:qp(index, Qs) of
+                    {error, Reason} ->
+                        io:format("deletion for appkey: ~p failed, start: ~p, "
+                                  "end: ~p, reason: ~p~n",
+                                  [AppKey, Start, End, {index, Reason}]),
+                        0;
+                    Rs ->
+                        length([R || {ok, <<"1">>} = R <- Rs])
+                end
+        end
+end,
+
+Del =
+fun D(Type, AppKey, Start, End, Acc) ->
+        case Start > End of
+            true ->
+                Acc;
+            false ->
+                L = DoDel(Type, AppKey, Start, Start + 1000),
+                D(Type, AppKey, Start + 1001, End, L + Acc)
+        end
+end,
+
 Delete =
 fun (AppKey) ->
         case AppKey of
@@ -14,25 +50,18 @@ fun (AppKey) ->
                 ok;
             _ ->
                 io:format("delete for appkey: ~p~n", [AppKey]),
-                Q = [[zrange, <<"im:", AppKey/binary, ":groups">>, 0, -1],
-                     [zrange, <<"im:", AppKey/binary, ":chatrooms">>, 0, -1]],
+                Q = [[zcard, <<"im:", AppKey/binary, ":groups">>],
+                     [zcard, <<"im:", AppKey/binary, ":chatrooms">>]],
                 case easemob_redis:qp(appconfig, Q) of
-                    [{ok, Groups}, {ok, Chatrooms}] ->
-                        Gs = [<<"im:gmsg:", G/binary, "@conference.easemob.com">>
-                                  || G <- Groups ++ Chatrooms],
-                        Qs = [[del, G] || G <- Gs],
-                        case easemob_redis:qp(index, Qs) of
-                            {error, Reason} ->
-                                io:format("deletion for appkey: ~p failed, reason: ~p~n",
-                                          [AppKey, {index, Reason}]);
-                            Rs ->
-                                LG = length(Groups),
-                                LC = length(Chatrooms),
-                                L = length([R || {ok, <<"1">>} = R <- Rs]),
-                                io:format("~p in ~p groups or chatrooms deleted"
-                                          " for appkey: ~p~n",
-                                          [L, LG + LC, AppKey])
-                        end;
+                    [{ok, BLG}, {ok, BLC}] ->
+                        LG = binary_to_integer(BLG),
+                        LC = binary_to_integer(BLC),
+                        LG2 = Del(<<"groups">>, AppKey, 0, LG, 0),
+                        LC2 = Del(<<"chatrooms">>, AppKey, 0, LC, 0),
+
+                        io:format("~p in ~p groups or chatrooms deleted"
+                                  " for appkey: ~p~n",
+                                  [LG2 + LC2, LG + LC, AppKey]);
                     {error, Reason} ->
                         io:format("deletion for appkey: ~p failed, reason: ~p~n",
                                   [AppKey, {appconfig, Reason}])
