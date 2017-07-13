@@ -20,11 +20,11 @@ fun (Type, AppKey, Start, End) ->
                 Gs = [<<"im:gmsg:", R/binary, "@conference.easemob.com">>
                           || R <- RGs],
                 Qs = [[del, G] || G <- Gs],
-                case easemob_redis:qp(index, Qs) of
+                case easemob_redis:qp(group_msg, Qs) of
                     {error, Reason} ->
                         io:format("deletion for appkey: ~p failed, start: ~p, "
                                   "end: ~p, reason: ~p~n",
-                                  [AppKey, Start, End, {index, Reason}]),
+                                  [AppKey, Start, End, {group_msg, Reason}]),
                         0;
                     Rs ->
                         length([R || {ok, <<"1">>} = R <- Rs])
