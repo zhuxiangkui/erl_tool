@@ -5,10 +5,10 @@
 %%
 echo(off),
 Node = ejabberd_store:random_store_node(muc), 
-case recon:named_rpc(Node, fun() -> mnesia:system_info(running_db_nodes) end, 5000) of
-    {[{_, Result}], []} ->
-        io:format("Muc Mnesia List ~p ~n", [Result]);
-    Error ->
+case catch rpc:call(Node, mnesia, system_info, [running_db_nodes]) of
+    {'EXIT', Error} ->
         io:format("Error:~p ~n", [Error]),
-        exit(1)
+        exit(1);
+    Result ->
+        io:format("Muc Mnesia List ~p ~n", [Result])
 end.
