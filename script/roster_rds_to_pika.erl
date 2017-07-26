@@ -127,16 +127,33 @@ handle_info(loop, State) ->
                     self() ! loop
             end,
             {noreply, NewState#state{shaper=NewShaper}};
-        {retry, Reason} ->
-            ?ERROR_MSG("Retry with reason:~p", [Reason]),
-            erlang:send_after(1000, self(), loop),
-            {noreply, State};
+        {retry, State1, User, Reason} ->
+            ?ERROR_MSG("Retry with reason:~p,user=~p", [Reason, User]),
+            self() ! {retry, User},
+            {noreply, State1};
         Other ->
             ?INFO_MSG("Stop with:state=~p, skip_cnt=~p, transfer_cnt=~p, res=~p",
                       [State, State#state.skip_cnt, State#state.transfer_cnt, Other]),
             application:set_env(message_store, {?MODULE, run_result}, Other),
             application:set_env(message_store, {?MODULE, run_state}, [R||R<-tuple_to_list(State), is_integer(R) orelse is_list(R)]),
             {stop, normal, State}
+    end;
+handle_info({retry, User}, State) ->
+    case catch handle_user(State, User) of
+        {ok, NewState, Add} ->
+            ?INFO_MSG("retry for user:~p, res=ok", [User]),
+            {NewShaper, Sleep} = shaper:update(NewState#state.shaper, Add),
+            if
+                Sleep > 0 ->
+                    erlang:send_after(Sleep, self(), loop);
+                true ->
+                    self() ! loop
+            end,
+            {noreply, NewState#state{shaper=NewShaper}};
+        Other ->
+            ?INFO_MSG("retry for user:~p, res=~p", [User, Other]),
+            erlang:send_after(500, self(), {retry, User}),
+            {noreply, State}
     end;
 handle_info(_Info, State) ->
     {noreply, State}.
@@ -155,18 +172,26 @@ code_change(_OldVsn, State, _Extra) ->
 handle_loop(State) ->
     case read_user(State) of
         {ok, User, State1} ->
-            case is_old_user(User) of
-                true ->
-                    %?INFO_MSG("SkipUser:~p",[User]),
-                    {ok, State1, 0};
-                false ->
-                    %?INFO_MSG("CheckUser:~p",[User]),
-                    {ok, State2} = transfer_roster(State1, User),
-                    set_old_user(User),
-                    {ok, State2, 1}
+            case catch handle_user(State1, User) of
+                {ok, NewState, Add} ->
+                    {ok, NewState, Add};
+                Other ->
+                    {retry, State1, User, Other}
             end;
         {error, Reason} ->
             {error, Reason}
+    end.
+
+handle_user(State, User) ->
+    case is_old_user(User) of
+        true ->
+            %%?INFO_MSG("SkipUser:~p",[User]),
+            {ok, State, 0};
+        false ->
+            %%?INFO_MSG("CheckUser:~p",[User]),
+            {ok, State2} = transfer_roster(State, User),
+            set_old_user(User),
+            {ok, State2, 1}
     end.
 
 transfer_roster(#state{now_offset = NowOffset, 
@@ -197,11 +222,11 @@ transfer_roster(#state{now_offset = NowOffset,
                         ok ->
                             {ok, State#state{transfer_cnt = TransferCnt+1}};
                         {error, Reason} ->
-                            throw({retry, {transfer_roster_fail, User, Reason}})
+                            throw({transfer_roster_fail, Reason})
                     end
             end;
         false ->
-            throw({retry, {read_roster_fail, User, PikaRosters, RdsRosters}})
+            throw({read_roster_fail, RdsRosters, PikaRosters})
     end.
 
 is_need_transfer(RdsRosters, PikaRosters) when length(RdsRosters) > length(PikaRosters) ->
@@ -216,7 +241,7 @@ is_old_user(User) ->
         [] ->
             false;
         {error, Reason} ->
-            throw({retry, {dets_fail, User, Reason}})
+            throw({dets_fail, User, Reason})
     end.
 
 set_old_user(User) ->
@@ -233,7 +258,8 @@ read_user(#state{data=Data}=State) ->
                     read_data(State#state{data=?BEGIN++Data1});
                 Idx2 ->
                     User = string:substr(Data1, 1, Idx2-1),
-                    {ok, list_to_binary(User), State#state{data=Data1}}
+                    User1 = list_to_binary(User),
+                    {ok, User1, State#state{data=Data1}}
             end
     end.
 
