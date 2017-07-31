@@ -18,8 +18,8 @@ case Args of
                                                list_to_integer(Speed), 
                                                list_to_integer(QueueId))]);
     [AppKey] ->
-        Speed = 1,
-        QueueId = 1,
+        Speed = "1",
+        QueueId = "1",
         io:format("limit App:~s,Speed:~s,QueueId:~s,result:~p~n",
                   [AppKey, Speed, QueueId,
                    mod_message_limit:limit_app(list_to_binary(AppKey),
