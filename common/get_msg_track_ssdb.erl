@@ -13,12 +13,13 @@ echo(off),
 case Args of
     [Mid] ->
 	{ok, TrackList} = easemob_message_log_ssdb:read_message_log_ssdb(erlang:list_to_binary(Mid)),
-	lists:foreach(fun (MsgTrack) -> io:format("~p~n", [erlang:binary_to_list(MsgTrack)]) end, TrackList);
+	TrackList1 = [jsx:decode(V) || V <- TrackList],  
+	lists:foreach(fun (MsgTrack) -> io:format("~p~n", [MsgTrack]) end, TrackList1);
     [Mid, To] ->
 	{ok, TrackList} = easemob_message_log_ssdb:read_message_log_ssdb(erlang:list_to_binary(Mid)),
 	TrackList_to = [jsx:decode(V) || V <- TrackList],
 	TrackList_to1 = lists:filter(fun ([_,_,_,_,{<<"to">>, To_Ele},_,_]) -> erlang:list_to_binary(To) == To_Ele end, TrackList_to),
-	TrackList_to2 =[jsx:encode(V) || V <- TrackList_to1],
-	lists:foreach(fun (MsgTrack) -> io:format("~p~n", [erlang:binary_to_list(MsgTrack)]) end, TrackList_to2)
+	%TrackList_to2 =[jsx:encode(V) || V <- TrackList_to1],
+	lists:foreach(fun (MsgTrack) -> io:format("~p~n", [MsgTrack]) end, TrackList_to1)
 end. 
 	    
