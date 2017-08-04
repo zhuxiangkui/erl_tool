@@ -8,10 +8,10 @@ echo(off),
         
 Pids = [Pid || {_, Pid, _, _} <- supervisor:which_children(msync_client_sup)],
 lists:foreach(fun (Pid) ->
-                      {state, Socket} = sys:get_state(Pid),
-                      case erlang:port_info(Socket) of
-                          undefined ->
-                              supervisor:terminate_child(msync_client_sup, Pid);
+                      case catch sys:get_state(Pid) of
+                          {state, Socket} ->
+                              erlang:port_info(Socket) == undefined andalso
+                                  supervisor:terminate_child(msync_client_sup, Pid);
                           _ ->
                               ok
                       end
