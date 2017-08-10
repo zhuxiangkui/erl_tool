@@ -5,5 +5,9 @@
 %%
 echo(off),
 [AppKeyBin, PlatFormLenBin, NumBin] = Args,
-app_config:set_app_config(list_to_binary(AppKeyBin), list_to_binary(PlatFormLenBin), list_to_atom(NumBin)),
+AppKey = list_to_binary(AppKeyBin),
+ConfigName = list_to_binary(PlatFormLenBin),
+ConfigValue = list_to_atom(NumBin),
+app_config:set_app_config_global(AppKey, ConfigName, ConfigValue),
+app_config:set_app_config(AppKey, ConfigName, ConfigValue),
 ok.
