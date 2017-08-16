@@ -55,6 +55,7 @@ fun
 (roam_msg_len, V) -> V;
 (roam_page_size, V) -> V;
 (ssdb_body_ttl, V) -> V;
+(message_recall, V) -> V;
 (message_recall_time, V) -> V;
 (Key, Value) ->
     io:format("error: invalid config name or value  ~s=~s~n",[Key, Value]),
