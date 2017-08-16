@@ -42,6 +42,7 @@ fun
 (large_group, V) when is_boolean(V) -> V;
 (read_group_cursor, V) when is_boolean(V) -> V;
 (read_group_index, V) when is_boolean(V) -> V;
+(read_undefined_cursor, V) when is_boolean(V) -> V;
 (is_push_index_cursor, V) when is_boolean(V) -> V;
 (write_default_res, V) when is_boolean(V) -> V;
 (send_presence, V) when is_boolean(V) -> V;
