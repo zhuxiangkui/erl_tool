@@ -43,6 +43,7 @@
 -define(END, "'").
 -define(INFO_MSG(Format, Args), spawn(fun()->error_logger:info_msg("~s:~p "++Format++"~n",[?MODULE, ?LINE]++Args) end)).
 -define(ERROR_MSG(Format, Args), error_logger:error_msg("~s:~p "++Format++"~n",[?MODULE, ?LINE]++Args)).
+-define(LARGE_ROSTER_LENGTH, 1000).
 
 %%%===================================================================
 %%% API
@@ -188,51 +189,83 @@ handle_user(State, User) ->
             %%?INFO_MSG("SkipUser:~p",[User]),
             {ok, State, 0};
         false ->
-            %%?INFO_MSG("CheckUser:~p",[User]),
-            {ok, State2} = transfer_roster(State, User),
-            set_old_user(User),
-            {ok, State2, 1}
+            ?INFO_MSG("CheckUser:~p",[User]),
+            case catch transfer_roster(State, User) of
+                {ok, State2} ->
+                    set_old_user(User),
+                    {ok, State2, 1};
+                Other ->
+                    case is_need_retry(Other) of
+                        true ->
+                            throw(Other);
+                        false ->
+                            log_to_file("roster_skip.log", "user:~s,reason:~p~n",[User, Other]),
+                            set_old_user(User),
+                            {ok, State, 1}
+                    end
+            end
     end.
+
+is_need_retry({pika_error,<<"ERR Invalid argument: Invalid key length">>}) ->
+    false;
+is_need_retry(_) ->
+    true.
 
 transfer_roster(#state{now_offset = NowOffset, 
                        max_offset=MaxOffset,
                        skip_cnt = SkipCnt,
                        transfer_cnt = TransferCnt}=State,User) ->
     Server = <<"easemob.com">>,
-    RdsRosters = 
-        case easemob_roster_cache:read_rosters(User, Server) of
-            not_found ->
-                easemob_roster:get_roster(User, Server, odbc);
-            Rs -> Rs
-        end,
-    PikaRosters =
-        easemob_roster:get_roster(User, Server, pika),
-    case is_list(RdsRosters) andalso is_list(PikaRosters) of
+    RdsRosters = read_cache_or_rds_rosters(User, Server),
+    PikaRosters = read_pika_rosters(User,Server),
+    RosterLength = length(RdsRosters),
+    if
+        RosterLength > ?LARGE_ROSTER_LENGTH ->
+            log_to_file("roster_large.log", "user:~s,len:~p~n",[User, RosterLength]);
         true ->
-            case is_need_transfer(RdsRosters, PikaRosters) of
-                false ->
-                    ?INFO_MSG("transfer skip:~p, progress=~p/~p (~.2f%), skip_cnt=~p",
-                              [User, NowOffset, MaxOffset, 100 * NowOffset / MaxOffset, SkipCnt+1]),
-                    {ok, State#state{skip_cnt = SkipCnt + 1}};
-                true ->
-                    TransferRes = easemob_roster_pika:write_rosters(User, RdsRosters),
-                    ?INFO_MSG("transfer roster for user:~p, progress=~p/~p (~.2f%), transfer_cnt=~p, res=~p,",
-                              [User, NowOffset, MaxOffset, 100 * NowOffset / MaxOffset, TransferCnt+1, TransferRes]),
-                    case TransferRes  of
-                        ok ->
-                            {ok, State#state{transfer_cnt = TransferCnt+1}};
-                        {error, Reason} ->
-                            throw({transfer_roster_fail, Reason})
-                    end
-            end;
+            skip
+    end,
+    case is_need_transfer(RdsRosters, PikaRosters) of
         false ->
-            throw({read_roster_fail, RdsRosters, PikaRosters})
+            ?INFO_MSG("transfer skip:~p, progress=~p/~p (~.2f%), roster_length=~p, skip_cnt=~p, transfer_cnt=~p",
+                      [User, NowOffset, MaxOffset, 100 * NowOffset / MaxOffset, RosterLength, SkipCnt+1, TransferCnt]),
+            {ok, State#state{skip_cnt = SkipCnt + 1}};
+        true ->
+            TransferRes = easemob_roster_pika:write_rosters(User, RdsRosters),
+            ?INFO_MSG("transfer roster for user:~p, progress=~p/~p (~.2f%), roster_length=~p, skip_cnt=~p, transfer_cnt=~p, res=~p,",
+                      [User, NowOffset, MaxOffset, 100 * NowOffset / MaxOffset, RosterLength, SkipCnt, TransferCnt+1, TransferRes]),
+            case TransferRes  of
+                ok ->
+                    {ok, State#state{transfer_cnt = TransferCnt+1}};
+                {error, Reason} ->
+                    throw({transfer_roster_fail, Reason})
+            end
     end.
 
 is_need_transfer(RdsRosters, PikaRosters) when length(RdsRosters) > length(PikaRosters) ->
     true;
 is_need_transfer(_,_) ->
     false.
+
+read_pika_rosters(User, Server) ->
+    case easemob_roster_pika:read_rosters(User, Server) of
+        {ok, RS} -> RS;
+        {error, Reason} ->
+            throw({pika_error, Reason})
+    end.
+read_cache_or_rds_rosters(User, Server) ->
+    Rosters = 
+        case easemob_roster_cache:read_rosters(User, Server) of
+            not_found ->
+                easemob_roster:get_roster(User, Server, odbc);
+            Rs -> Rs
+        end,
+    case is_list(Rosters) of
+        true ->
+            Rosters;
+        false ->
+            throw({rds_error, Rosters})
+    end.
 
 is_old_user(User) ->
     case dets:lookup(?TAB, User) of
@@ -285,3 +318,8 @@ read_now_offset() ->
         [] ->
             0
     end.
+
+log_to_file(FileName, Format, Args) ->
+    spawn(fun()->
+                  file:write_file(FileName, io_lib:format(Format, Args), [append])
+          end).
