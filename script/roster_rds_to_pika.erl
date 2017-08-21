@@ -189,7 +189,7 @@ handle_user(State, User) ->
             %%?INFO_MSG("SkipUser:~p",[User]),
             {ok, State, 0};
         false ->
-            ?INFO_MSG("CheckUser:~p",[User]),
+            %%?INFO_MSG("CheckUser:~p",[User]),
             case catch transfer_roster(State, User) of
                 {ok, State2} ->
                     set_old_user(User),
@@ -258,6 +258,8 @@ read_cache_or_rds_rosters(User, Server) ->
         case easemob_roster_cache:read_rosters(User, Server) of
             not_found ->
                 easemob_roster:get_roster(User, Server, odbc);
+            [] ->
+                easemob_roster:get_roster(User, Server, odbc);
             Rs -> Rs
         end,
     case is_list(Rosters) of
@@ -323,3 +325,4 @@ log_to_file(FileName, Format, Args) ->
     spawn(fun()->
                   file:write_file(FileName, io_lib:format(Format, Args), [append])
           end).
+
