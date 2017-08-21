@@ -130,7 +130,7 @@ do_handle(List, ?RUN_MODE, [SleepTime]) ->
                 WritePipline = [[set, ?PRIVACY_PIKA_KEY ++ User, Value]||
                                    {User,{ok, Value}}<-lists:zip(UserList, PrivacyList),
                                    Value /= <<"[]">>],
-                ?INFO_MSG("WritePipline:~p",[WritePipline]),
+                %?INFO_MSG("WritePipline:~p",[WritePipline]),
                 easemob_redis:qp(privacy_pika, WritePipline);
             _ ->
                 ok
