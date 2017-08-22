@@ -58,12 +58,7 @@ stop() ->
     application:unset_env(message_store, {?MODULE, run_result}),
     case whereis(?MODULE) of
         Pid when is_pid(Pid) ->
-            Ref = erlang:monitor(process, Pid),
-            exit(Pid, kill),
-            receive
-                {'DOWN', Ref, process, _Pid, _Reason} -> 
-                    ok
-            end;
+            gen_server:stop(Pid);
         _ ->
             skip
     end.
