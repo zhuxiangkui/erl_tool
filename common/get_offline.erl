@@ -11,7 +11,7 @@
 
 [JID,Resource] = case Args of
                      [ID] ->
-                         [list_to_binary(ID), easemob_resource:get_default_resource()];
+                         [list_to_binary(ID), application:get_env(message_store, default_resource, <<"mobile">>)];
                      [ID, R] ->
                          [list_to_binary(ID), list_to_binary(R)]
                  end,
