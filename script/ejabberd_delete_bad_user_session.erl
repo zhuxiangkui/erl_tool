@@ -164,6 +164,25 @@ do_handle_key(Key, delete_bad_user_session, [IsDel]) ->
             skip
     end.
 
+check_session(User, error, _Session, IsDel) ->
+    Key = <<"im:sr:", User/binary>>,
+    {ok, AllResources} = mod_session_redis:redis_q(client(), ["HKEYS", Key]),
+    Fun = fun(Resource) ->
+		  case jlib:resourceprep(Resource) of
+		      error ->
+			  case IsDel of
+			      true ->
+				  mod_session_redis:redis_q(client(), ["HDEL", Key, Resource]),
+				  ?INFO_MSG("Delete Session User: ~p, Resource: ~p ~n", [User, Resource]);
+			      _ ->
+				  skip,
+				  ?INFO_MSG("Skip Delete Session User: ~p, Resource: ~p ~n", [User, Resource])
+			  end;
+		      _ ->
+			 ok
+		  end
+	  end,
+    [Fun(Value) || Value <- AllResources];
 
 check_session(User, Resource, Session, IsDel) ->
      case  is_bad_session(Session) of
