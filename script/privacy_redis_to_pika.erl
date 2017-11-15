@@ -8,15 +8,15 @@
 %%%-------------------------------------------------------------------
 -module(privacy_redis_to_pika).
 
-%% delete bad user session, must run in ejabberdctl debug
-%% privacy_redis_to_pika:start().
+%% transfer privacy from redis to pika, must run in ejabberdctl debug
+%% privacy_redis_to_pika:start(Host, Port).
 %% privacy_redis_to_pika:stop().
 
 %% API
 -export([
          start/4,
-         start/0,
-         start/1,
+         start/3,
+         start/2,
          stop/0,
          scan/6,
          scan_worker/5,
@@ -40,11 +40,11 @@
 %%% API
 %%%===================================================================
 
-start() ->
-    start(no_host, no_port, redis, 100).
+start(Host, Port) ->
+    start(Host, Port, 100).
 
-start(SleepTime) ->
-    start(no_host, no_port, redis, SleepTime).
+start(Host, Port, SleepTime) ->
+    start(Host, Port, redis, SleepTime).
 
 start(Host, Port, CodisOrRedis, SleepTime) ->
     scan(Host, Port, CodisOrRedis, ?RUN_MODE, [SleepTime], 1000000000).
@@ -124,20 +124,40 @@ do_handle(List, ?RUN_MODE, [SleepTime]) ->
     ?INFO_MSG("do_handle keys=~p",[List]),
     try
         UserList = [User||Key<-List, User<-[key_to_user(Key)], User /= skip],
-        QueryPipline = [[get,?PRIVACY_REDIS_KEY ++ User]||User<-UserList],
-        case easemob_redis:qp(privacy, QueryPipline) of
-            PrivacyList when is_list(PrivacyList) ->
-                WritePipline = [[set, ?PRIVACY_PIKA_KEY ++ User, Value]||
-                                   {User,{ok, Value}}<-lists:zip(UserList, PrivacyList),
-                                   Value /= <<"[]">>],
-                %?INFO_MSG("WritePipline:~p",[WritePipline]),
-                easemob_redis:qp(privacy_pika, WritePipline);
-            _ ->
-                ok
+        TypeQueryPipline = [[type,?PRIVACY_REDIS_KEY ++ User]||User<-UserList],
+        case easemob_redis:qp(privacy, TypeQueryPipline) of
+            TypeList when is_list(TypeList) ->
+                GoodUserList = [User ||{User, {ok, <<"string">>}}<-lists:zip(UserList, TypeList)],
+                QueryPipline = [[get,?PRIVACY_REDIS_KEY ++ User]||User <- GoodUserList],
+                case easemob_redis:qp(privacy, QueryPipline) of
+                    PrivacyList when is_list(PrivacyList) ->
+                        TransferUsers = [User||
+                                           {User,{ok, Value}}<-lists:zip(GoodUserList, PrivacyList),
+                                           Value /= <<"[]">>],
+                        WritePipline = [[set, ?PRIVACY_PIKA_KEY ++ User, Value]||
+                                           {User,{ok, Value}}<-lists:zip(GoodUserList, PrivacyList),
+                                           Value /= <<"[]">>],
+                        %%?INFO_MSG("WritePipline:~p",[WritePipline]),
+                        ?INFO_MSG("transfer cnt:~p/~p/~p,TransferUsers:~p",
+                                  [length(WritePipline), length(GoodUserList), length(UserList), TransferUsers]),
+                        case easemob_redis:qp(privacy_pika, WritePipline) of
+                            ResList when is_list(ResList) ->
+                                ok;
+                            Other ->
+                                ?ERROR_MSG("handle_key_list error:reason:~p,q=~p",[Other, WritePipline]),
+                                ok
+                        end;
+                    Other ->
+                        ?ERROR_MSG("handle_key_list error:reason:~p, q=~p",[Other, QueryPipline]),
+                        ok
+                end;
+            Other ->
+                ?ERROR_MSG("handle_key_list error:reason:~p, q=~p",[Other, TypeQueryPipline]),
+                skip
         end
      catch
          C:E ->
-             ?ERROR_MSG("handle_key_list error:keys=~p, error=~p",[List, {C,E,erlang:get_stacktrace()}])
+             ?ERROR_MSG("handle_key_list error:error=~p, keys=~p",[{C,E,erlang:get_stacktrace()}, List])
      end,
     if
         SleepTime > 0 ->
