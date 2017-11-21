@@ -61,6 +61,7 @@ fun
 (use_rsa, V) when is_boolean(V) -> V;
 (encrypt_store, V) when is_boolean(V) -> V;
 (symmetrical_type, V) -> V;
+(data_sync, V) when is_boolean(V) -> V;
 (Key, Value) ->
     io:format("error: invalid config name or value  ~s=~s~n",[Key, Value]),
     exit(normal)
