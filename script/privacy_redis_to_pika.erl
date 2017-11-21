@@ -19,6 +19,7 @@
          start/2,
          stop/0,
          scan/6,
+         start_repair/5,
          scan_worker/5,
          do_scan/6,
          start_from_codis/2,
@@ -35,6 +36,34 @@
 -define(RUN_MODE, privacy_redis_to_pika).
 -define(PRIVACY_REDIS_KEY, "im:privacyv2:").
 -define(PRIVACY_PIKA_KEY, "im:privacy:pika:").
+-define(DEFAULT_PRIVACY, <<"special">>).
+-record(privacy, {us = {<<"">>, <<"">>} :: {binary(), binary()},
+                  default = none        :: none | binary(),
+                  lists = []}).
+
+-record(listitem, {type = none :: none | jid | group | subscription,
+                   value = none ,
+                   action = allow :: allow | deny,
+                   order = 0 :: integer(),
+                   match_all = false :: boolean(),
+                   match_iq = false :: boolean(),
+                   match_message = false :: boolean(),
+                   match_presence_in = false :: boolean(),
+                   match_presence_out = false :: boolean()}).
+-record(privacy_cache_item, {
+          none = none :: none,
+          jid = <<"">> ,
+          group = <<"">> :: binary(),
+          subscription = none :: none | both | from | to | remove,
+          action = allow :: allow | deny,
+          order = 0 :: integer(),
+          match_strategy =  <<"">> :: binary()}).
+-record(jid, {user = <<"">> :: binary(),
+              server = <<"">> :: binary(),
+              resource = <<"">> :: binary(),
+              luser = <<"">> :: binary(),
+              lserver = <<"">> :: binary(),
+              lresource = <<"">> :: binary()}).
 
 %%%===================================================================
 %%% API
@@ -47,7 +76,10 @@ start(Host, Port, SleepTime) ->
     start(Host, Port, redis, SleepTime).
 
 start(Host, Port, CodisOrRedis, SleepTime) ->
-    scan(Host, Port, CodisOrRedis, ?RUN_MODE, [SleepTime], 1000000000).
+    scan(Host, Port, CodisOrRedis, ?RUN_MODE, [SleepTime, all], 1000000000).
+
+start_repair(Host, Port, CodisOrRedis, SleepTime, MaxScan) ->
+    scan(Host, Port, CodisOrRedis, ?RUN_MODE, [SleepTime, repair], MaxScan).
 
 stop() ->
     stop_all(?RUN_MODE).
@@ -119,7 +151,7 @@ do_scan(RedisHost, RedisPort, RunMode, _RunArgs, _Cursor, _MaxScan) ->
     ok.
 
 
-do_handle(List, ?RUN_MODE, [SleepTime]) ->
+do_handle(List, ?RUN_MODE, [SleepTime,Action|_]) ->
     update_progress(length(List)),
     ?INFO_MSG("do_handle keys=~p",[List]),
     try
@@ -127,16 +159,22 @@ do_handle(List, ?RUN_MODE, [SleepTime]) ->
         TypeQueryPipline = [[type,?PRIVACY_REDIS_KEY ++ User]||User<-UserList],
         case easemob_redis:qp(privacy, TypeQueryPipline) of
             TypeList when is_list(TypeList) ->
-                GoodUserList = [User ||{User, {ok, <<"string">>}}<-lists:zip(UserList, TypeList)],
+                GoodUserList0 = [User ||{User, {ok, <<"string">>}}<-lists:zip(UserList, TypeList)],
+                OldUserList = [User ||{User, {ok, <<"hash">>}}<-lists:zip(UserList, TypeList)],
+                GoodUserList = case Action of
+                                   all -> GoodUserList0 ++ OldUserList;
+                                   repair -> OldUserList
+                               end,
+                repair_privacys(OldUserList),
                 QueryPipline = [[get,?PRIVACY_REDIS_KEY ++ User]||User <- GoodUserList],
                 case easemob_redis:qp(privacy, QueryPipline) of
                     PrivacyList when is_list(PrivacyList) ->
                         TransferUsers = [User||
                                            {User,{ok, Value}}<-lists:zip(GoodUserList, PrivacyList),
-                                           Value /= <<"[]">>],
+                                           Value /= <<"[]">>, Value /= undefined],
                         WritePipline = [[set, ?PRIVACY_PIKA_KEY ++ User, Value]||
                                            {User,{ok, Value}}<-lists:zip(GoodUserList, PrivacyList),
-                                           Value /= <<"[]">>],
+                                           Value /= <<"[]">>, Value /= undefined],
                         %%?INFO_MSG("WritePipline:~p",[WritePipline]),
                         ?INFO_MSG("transfer cnt:~p/~p/~p,TransferUsers:~p",
                                   [length(WritePipline), length(GoodUserList), length(UserList), TransferUsers]),
@@ -246,3 +284,199 @@ redis_server_filter(#{<<"type">> := <<"slave">>, <<"addr">> := Addr}) ->
     {true, {binary_to_list(RedisHost), binary_to_integer(RedisPort)}};
 redis_server_filter(_Master) ->
     false.
+
+repair_privacys(UserList) ->
+    [try
+         repair_privacy(User)
+     catch
+         C:E ->
+             ?INFO_MSG("repair_privacy error:~p,user=~p,stacktrace=~p",[{C,E}, User, erlang:get_stacktrace()])
+     end||User<-UserList],
+    ok.
+
+privacy_key(User) ->
+    <<?PRIVACY_REDIS_KEY, (iolist_to_binary(User))/binary>>.
+
+remove_privacy(User) ->
+    easemob_redis:q(privacy, [del, privacy_key(User)]).
+
+repair_privacy(User) ->
+    case easemob_redis:q(privacy, ["HGETALL", privacy_key(User)]) of
+        {ok, []} -> skip;
+        {ok, Result} ->
+            remove_privacy(User),
+            ?INFO_MSG("remove_privacy_cache:user=~p,result=~p",[User, Result]),
+            Ret  = parse_privacy(Result, #privacy{}),
+            case lists:keyfind(?DEFAULT_PRIVACY, 1, Ret#privacy.lists) of
+                false -> ignore;
+                {_,[]} -> ignore;
+                {_, List} ->
+                    ?INFO_MSG("write_privacy_cache:user=~p, list=~p",[User, List]),
+                    write_privacy(User, List)
+            end,
+            ok;
+        _Error ->
+            skip
+    end.
+
+write_privacy(LUser, List) ->
+    ComposePrivacy = compose_privacy(List),
+    Q = ["SET", privacy_key(LUser)]++ ComposePrivacy,
+    easemob_redis:q(privacy, Q),
+    ok.
+
+parse_privacy([Key, Value | Last], Privacy) ->
+	case Key of
+		?DEFAULT_PRIVACY ->
+			Lists = Privacy#privacy.lists,
+			ListItem = parse_privacy_itemlist(mjson:decode(Value), []),
+			NewPrivacy = Privacy#privacy{default = ?DEFAULT_PRIVACY, lists=[{?DEFAULT_PRIVACY, ListItem} | Lists]},
+			parse_privacy(Last, NewPrivacy);
+		_ ->
+			parse_privacy(Last, Privacy)
+	end;
+parse_privacy([], Privacy) ->
+	Privacy.
+parse_privacy_itemlist([{struct, PrivacyItemTerm} | More], Parsed) ->
+	None = proplists:get_value( <<"none">>, PrivacyItemTerm, none),
+	JID = proplists:get_value( <<"jid">>, PrivacyItemTerm, <<"">>),
+	Action = proplists:get_value( <<"action">>, PrivacyItemTerm, allow),
+	Order = proplists:get_value( <<"order">>, PrivacyItemTerm, 0),
+	Group = proplists:get_value( <<"group">>, PrivacyItemTerm, <<"">>),
+	MatchStrategy = proplists:get_value( <<"match_strategy">>, PrivacyItemTerm, <<"">>),
+	Subscription = proplists:get_value( <<"subscription">>, PrivacyItemTerm, none),
+	PrivacyCacheItem = #privacy_cache_item{
+                          none = None,
+                          jid = JID,
+                          group = Group,
+                          subscription = Subscription,
+                          action = Action,
+                          order = Order,
+                          match_strategy =  MatchStrategy},
+	parse_privacy_itemlist(More, [transprivacycache2listitem(PrivacyCacheItem)] ++ Parsed);
+parse_privacy_itemlist([], Parsed) ->
+	Parsed.
+transprivacycache2listitem(PrivacyCacheItem) ->
+	ListItem = transstrategy2listitem(PrivacyCacheItem#privacy_cache_item.match_strategy),
+	ListitemType = ListItem#listitem{
+                     action=erlang:binary_to_atom(PrivacyCacheItem#privacy_cache_item.action, utf8),
+                     order=PrivacyCacheItem#privacy_cache_item.order},
+	JID = PrivacyCacheItem#privacy_cache_item.jid,
+	Group = PrivacyCacheItem#privacy_cache_item.group,
+	Subscription = PrivacyCacheItem#privacy_cache_item.subscription,
+
+	if
+		JID =/= <<"">> ->
+			JIDRet = case jlib:string_to_jid(JID) of
+                         error -> {<<"">>, <<"">>, <<"">>};
+                         JId -> {JId#jid.user, JId#jid.server, JId#jid.resource}
+                     end,
+			ListitemType#listitem{type=jid, value=JIDRet};
+		Group  =/= <<"">> ->
+			ListitemType#listitem{type=group, value=Group};
+		Subscription =/= none  ->
+			ListitemType#listitem{type=jid, value=Subscription};
+		true ->
+			ListitemType
+	end.
+transstrategy2listitem(MatchStrategy) ->
+	All = case lists:member(<<"all">>, MatchStrategy) of
+              true ->
+                  #listitem{match_all = true};
+              false ->
+                  #listitem{}
+          end,
+
+	IQ = case lists:member(<<"iq">>, MatchStrategy) of
+             true ->
+                 All#listitem{match_iq = true};
+             false ->
+                 All
+         end,
+
+	Message = case lists:member(<<"message">>, MatchStrategy) of
+                  true ->
+                      IQ#listitem{match_message = true};
+                  false ->
+                      IQ
+              end,
+
+	PresenceIn = case lists:member(<<"presence_in">>, MatchStrategy) of
+                     true ->
+                         Message#listitem{match_presence_in = true};
+                     false ->
+                         Message
+                 end,
+
+	PresenceOut = case lists:member(<<"presence_out">>, MatchStrategy) of
+                      true ->
+                          PresenceIn#listitem{match_presence_out = true};
+                      false ->
+                          PresenceIn
+                  end,
+	PresenceOut.
+compose_privacy(List) ->
+	R = compose_privacy_itemlist(List, []),
+	[mjson:encode({array, R})].
+
+compose_privacy_itemlist([PrivacyItem|More], Composed) ->
+	RPrivacyItem = compose_privacy_item(PrivacyItem),
+	compose_privacy_itemlist(More, [RPrivacyItem] ++ Composed);
+compose_privacy_itemlist([], Composed) ->
+	Composed.
+
+compose_privacy_item(ListItem) ->
+	PrivacyItem = listitem2privacycacheitem(ListItem),
+	lists:zip(record_info(fields, privacy_cache_item), tl(tuple_to_list(PrivacyItem))) -- lists:zip(record_info(fields, privacy_cache_item), tl(tuple_to_list(#privacy_cache_item{}))).
+
+listitem2privacycacheitem(ListItem) ->
+	MatchStrategy = transmatch2strategy(ListItem),
+	PrivacyCatchItem = #privacy_cache_item{
+                          match_strategy = MatchStrategy,
+                          action = ListItem#listitem.action,
+                          order = ListItem#listitem.order},
+
+	case ListItem#listitem.type of
+		none ->
+			PrivacyCatchItem;
+		jid ->
+			PrivacyCatchItem#privacy_cache_item{ jid = jlib:jid_to_string(ListItem#listitem.value) };
+		group ->
+			PrivacyCatchItem#privacy_cache_item{ group  = ListItem#listitem.value };
+		subscription ->
+			PrivacyCatchItem#privacy_cache_item{ subscription = ListItem#listitem.value }
+	end.
+transmatch2strategy(ListItem) ->
+	MatchStrategyAll = case ListItem#listitem.match_all of
+                           true ->
+                               [] ++ [<<"all">>];
+                           false ->
+                               []
+                       end,
+	MatchStrategyIQ = case ListItem#listitem.match_iq  of
+                          true ->
+                              MatchStrategyAll ++ [<<"iq">>];
+                          false ->
+                              MatchStrategyAll
+                      end,
+	MatchStrategyMessage = case ListItem#listitem.match_message of
+                               true ->
+                                   MatchStrategyIQ ++ [<<"message">>];
+                               false ->
+                                   MatchStrategyIQ
+                           end,
+
+	MatchStrategyPIn = case ListItem#listitem.match_presence_in of
+                           true ->
+                               MatchStrategyMessage ++ [<<"presence_in">>];
+                           false ->
+                               MatchStrategyMessage
+                       end,
+
+	MatchStrategyPOut = case ListItem#listitem.match_presence_out of
+                            true ->
+                                MatchStrategyPIn ++  [<<"presence_out">>];
+                            false ->
+                                MatchStrategyPIn
+                        end,
+	MatchStrategyPOut.
