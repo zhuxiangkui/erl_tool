@@ -5,7 +5,7 @@
 % Pay: the pay money after open service
 % Email: email
 % PhoneNumber: phone number
-% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd4 -setcookie 'LTBEXKHWOCIRRSEUNSYS' ejabberd/open_image_audit.erl AppKey 1000 test@email.com 13800000000
+% e.g.: ./erl_expect -sname ejabberd@sdb-ali-hangzhou-ejabberd4 -setcookie 'LTBEXKHWOCIRRSEUNSYS' ejabberd/open_image_audit.erl AppKey 0 test@email.com 13800000000
 
 echo(off),
 [AppKey0, Pay0, Email0, PhoneNumber0] = Args,
