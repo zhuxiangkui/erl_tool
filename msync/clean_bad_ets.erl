@@ -36,7 +36,7 @@ fun() ->
           end, {0,[]}, msync_c2s_tbl_pb_jid)
 end,
 CanDel = fun(GoodNum, ClientNum) ->
-                 abs(ClientNum-GoodNum) =< 0.05 * ClientNum
+                 abs(ClientNum-GoodNum) =< 0.1 * ClientNum
          end,
 
 Clean = fun()->
