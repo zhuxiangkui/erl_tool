@@ -50,18 +50,22 @@ fun
 (webim, V) when is_boolean(V) -> V;
 (send_group_presence, V) when is_boolean(V) -> V;
 (send_chatroom_presence, V) when is_boolean(V) -> V;
-(chat_history_num, V) -> V;
+(chat_history_num, V) when is_integer(V) -> V;
 (msg_page_size, V) -> V;
 (is_roam, V) when is_boolean(V) -> V;
-(roam_msg_len, V) -> V;
-(roam_page_size, V) -> V;
-(ssdb_body_ttl, V) -> V;
+(roam_msg_len, V) when is_integer(V) -> V;
+(roam_page_size, V) when is_integer(V) -> V;
+(ssdb_body_ttl, V) when is_integer(V) -> V;
 (message_recall, V) -> V;
 (message_recall_time, V) -> V;
 (use_rsa, V) when is_boolean(V) -> V;
 (encrypt_store, V) when is_boolean(V) -> V;
 (symmetrical_type, V) -> V;
 (data_sync, V) when is_boolean(V) -> V;
+('res:len:mobile', V) when is_integer(V)-> V;
+('res:len:linux', V) when is_integer(V) -> V;
+('res:len:windows', V) when is_integer(V) -> V;
+('res:len:webim', V) when is_integer(V) -> V;
 (Key, Value) ->
     io:format("error: invalid config name or value  ~s=~s~n",[Key, Value]),
     exit(normal)
@@ -73,9 +77,20 @@ fun(AppKey, ConfigName, ConfigValue) ->
         app_config:load_app_config()
 end,
 
+ChangeValue =
+fun(ValueOri) ->
+	Value = list_to_atom(ValueOri),
+	case is_boolean(Value) of
+	    true ->
+		Value;
+	    _ ->
+		list_to_integer(ValueOri)
+	end
+end,
+
 case Args of
     [AppKey, ConfigName, ConfigValue ] ->
-        Check(list_to_atom(ConfigName), list_to_atom(ConfigValue)),
+        Check(list_to_atom(ConfigName), ChangeValue(ConfigValue)),
         io:format("set ~s:~s = ~s  => ~p~n", [ AppKey, ConfigName, ConfigValue,
                                                SetAppConfig(iolist_to_binary(AppKey),
                                                             list_to_atom(ConfigName),
