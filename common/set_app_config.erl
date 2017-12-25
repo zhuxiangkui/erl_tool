@@ -3,7 +3,7 @@
 % op: set ConfigName = ConfigValue for AppKey
 %
 % e.g.: ./erl_expect -sname msync@sdb-ali-hangzhou-ejabberd5 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/set_app_config.erl easemob-demo#chatdemoui check_nickname false
-
+% e.g.: ./erl_expect -sname msync@sdb-ali-hangzhou-ejabberd5 -setcookie 'LTBEXKHWOCIRRSEUNSYS' common/set_app_config.erl 'easemob-demo#chatdemoui|appkey2|appkey3' check_nickname false
 echo(off),
 
 Check =
@@ -79,22 +79,25 @@ end,
 
 ChangeValue =
 fun(ValueOri) ->
-	Value = list_to_atom(ValueOri),
-	case is_boolean(Value) of
-	    true ->
-		Value;
-	    _ ->
-		list_to_integer(ValueOri)
-	end
+        case catch list_to_integer(ValueOri) of
+            {'EXIT',_} ->
+                list_to_atom(ValueOri);
+            Integer when is_integer(Integer) ->
+                Integer
+        end
 end,
 
 case Args of
-    [AppKey, ConfigName, ConfigValue ] ->
+    [AppKeyListRaw, ConfigName, ConfigValue ] ->
         Check(list_to_atom(ConfigName), ChangeValue(ConfigValue)),
-        io:format("set ~s:~s = ~s  => ~p~n", [ AppKey, ConfigName, ConfigValue,
-                                               SetAppConfig(iolist_to_binary(AppKey),
-                                                            list_to_atom(ConfigName),
-                                                            list_to_atom(ConfigValue))]);
+        AppkeyList = string:tokens(AppKeyListRaw,"|"),
+        lists:foreach(
+          fun(AppKey) ->
+                  io:format("set ~s:~s = ~s  => ~p~n", [ AppKey, ConfigName, ConfigValue,
+                                                         SetAppConfig(iolist_to_binary(AppKey),
+                                                                      list_to_atom(ConfigName),
+                                                                      list_to_atom(ConfigValue))])
+          end, AppkeyList);
     _ ->
         io:format("usage: set_app_config.erl <AppKey> <Config> [<Value>]~n",[])
 end,
